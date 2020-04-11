@@ -1,0 +1,52 @@
+.product-container {
+    border-radius: 0px;
+    border: none;
+}
+
+.avatar {
+    position: relative;
+    max-height: 100px;
+    min-width: 100px;
+}
+
+.bi-caret-down-fill {
+    display: none;
+}
+
+.bi-caret-right-fill {
+    display: inline;
+}
+
+.product-title {
+    background: white;
+    line-height: 50px;
+
+    div {
+        margin-left: 20px;
+    }
+
+    div {
+        &:not(.collapsed) {
+            .bi-caret-down-fill {
+                display: inline;
+            }
+
+            .bi-caret-right-fill {
+                display: none;
+            }
+        }
+    }
+    
+    svg {
+        float: right;
+        margin: 17px;
+    }
+}
+
+.product-title:hover {
+    cursor: pointer;
+}
+
+.product-info {
+    background: #f7f7f7;
+}
