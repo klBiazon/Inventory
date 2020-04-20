@@ -53,8 +53,7 @@ module.exports = {
     Product.updateOne({ _id: req.params.id }, product)
       .then(result => {
         res.status(201).json({
-          message: 'Product is updated',
-          product: result
+          message: 'Product is updated'
         });
       }).catch(err => {
         res.status(404).send(err);
