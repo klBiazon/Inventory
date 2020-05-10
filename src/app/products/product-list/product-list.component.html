@@ -10,6 +10,7 @@
         <div class="card-header">
             <div class="col-md-12 col-lg-10 offset-lg-1">
                 <h2 class="no-margin">Products</h2>
+                <button class="btn page-btn" routerLink="/products/add">+ Add Product</button>
             </div>
         </div>
         <div class="col-md-12 col-lg-10 offset-lg-1">
@@ -38,12 +39,14 @@
                             <tbody>
                                 <tr>
                                     <td style="width: 1em">
-                                        <img [src]="product.imgUrl" class="avatar rounded-circle"/>
+                                        <img class="avatar rounded-circle"
+                                            [src]="product.imgUrl ? product.imgUrl : defaultImage"/>
                                     </td>
                                     <td>
-                                        <strong>Price:&nbsp;</strong>
-                                        <p>{{product.price | currency}}</p>
-                                        
+                                        <!-- <strong>Price:&nbsp;</strong>
+                                        <p>{{product.price | currency}}</p> -->
+                                        <strong>Name:&nbsp;</strong>
+                                        <p>{{product.name}}</p>
                                     </td>
                                 </tr>
                             </tbody>

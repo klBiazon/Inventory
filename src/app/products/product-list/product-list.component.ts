@@ -12,6 +12,7 @@ import { Products } from './../products.model';
 export class ProductListComponent implements OnInit {
 
   products: Products[]; 
+  defaultImage = './../../../assets/defaultImg.png';
 
   constructor(private productsService: ProductsService, 
       private errorHandlerService: ErrorHandlerService) { }
@@ -25,6 +26,10 @@ export class ProductListComponent implements OnInit {
       .subscribe(res => {
         this.products = res['products'];
       }, error => this.errorHandlerService.handleError(error));
+  }
+
+  addProduct() {
+    alert('CLICKED');
   }
 
 }
