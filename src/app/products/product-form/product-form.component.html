@@ -1,1 +1,49 @@
-<p>product-form works!</p>
+<div class="">
+    <div class="card border-light mb-3 product-container">
+        <div class="card-header">
+            <div class="col-md-12 col-lg-10 offset-lg-1">
+                <h2 class="no-margin">Add Product</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-10 offset-lg-1">
+        <div class="card border-light mb-3">
+            <div class="card-header product-form">
+                <form [formGroup]="form" #productForm="ngForm"  (ngSubmit)="submit(productForm)">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-12">
+                            Product Name:
+                            <input name="name"
+                                formControlName="name"
+                                type="text"
+                                class="form-control"
+                                placeholder="Product Name">
+                            <small *ngIf="form.get('name').invalid">Invalid</small>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-12">
+                            Upload an Image: <br>
+                        </label>
+                        <div id="imgUrl"
+                            name="imgUrl" 
+                            class="custom-file-input"
+                            type="button"
+                            (click)="filePicker.click()">
+                        </div>
+                        <input #filePicker class="file-picker" type="file" accept="image/*"
+                            (change)="imagePicked(displayImageService.preview($event))">
+                            <!-- (change)="displayImageService.preview(imgUrl.get().files)"> -->
+                            <span class="image-name">{{displayImageService.fileName}}</span>
+                        <div class="col-sm-12">
+                            <img [src]="displayImageService.URL" height="150" *ngIf="displayImageService.URL">
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <input class="btn page-btn float-right col-sm-2" type="submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
