@@ -2,7 +2,6 @@ const Product = require('./products.model');
 
 createProductObj = (body) => {
   return new Product({
-    _id: body.id,
     name: body.name,
     imgUrl: body.imgUrl
   });
@@ -10,12 +9,29 @@ createProductObj = (body) => {
 
 module.exports = {
   getAll : (req, res) => {
-    Product.find()
+    const pageSize = +req.query.pageSize;
+    const currentPage = +req.query.page;
+    const productQuery = Product.find();
+    let fetchedResults;
+
+    if (pageSize && currentPage) {
+      productQuery
+        .skip(pageSize * (currentPage - 1))
+        .limit(pageSize);
+    }
+
+    productQuery.find()
       .then(result => {
+        fetchedResults = result;
+        return Product.count();
+      })
+      .then(count => {
         res.status(200).json({
-          products: result
+          products: fetchedResults,
+          total: count
         });
-      }).catch(err => {
+      })
+      .catch(err => {
         res.status(404).send(err);
       });
   },
@@ -34,8 +50,10 @@ module.exports = {
   },
 
   post : (req, res) => {
+    const url = req.protocol + "://" + req.get("host");
+    req.body.imgUrl = url + "/images/" + req.file.filename;
     const product = createProductObj(req.body);
-    delete product._id;
+    
     product.save()
       .then(result => {
         res.status(201).json({
@@ -48,7 +66,16 @@ module.exports = {
   },
 
   put : (req, res) => {
-    const product = createProductObj(req.body);
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      req.body.imgUrl = url + "/images/" + req.file.filename;
+    }
+    
+    product = new Product({
+      _id: req.body.id,
+      name: req.body.name,
+      imgUrl: req.body.imgUrl
+    });
     
     Product.updateOne({ _id: req.params.id }, product)
       .then(result => {
