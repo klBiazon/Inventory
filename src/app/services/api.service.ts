@@ -3,21 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 export class ApiService {
-
   constructor(private SERVER_URL: string, private http: HttpClient) { }
 
-  get() {
-    return this.http.get(this.SERVER_URL)
+  get(id ?: string, pagination ?: any) {
+    return this.http.get(this.SERVER_URL + (id ? '/' + id : '')
+     + `?page=${pagination?.page}&pageSize=${pagination?.pageSize}`)
       .pipe(map(res => res));
   }
 
-  post(postObj) {
-    return this.http.post(this.SERVER_URL, JSON.stringify(postObj))
+  post(postObj: FormData) {
+    return this.http.post(this.SERVER_URL, postObj)
       .pipe(map(res => res));
   }
 
   put(updateObj) {
-    return this.http.put(this.SERVER_URL + '/' + updateObj.id, JSON.stringify(updateObj))
+    return this.http.put(this.SERVER_URL + '/' + updateObj.get('id'), updateObj)
       .pipe(map(res => res));
   }
 
