@@ -33,4 +33,11 @@ export class DisplayImageService {
 
     return files[0];
   }
+
+  resetDisplayImageService() {
+    this.imagePath = null;
+    this.URL = null;
+    this.message = null;
+    this.fileName = null;
+  }
 }
