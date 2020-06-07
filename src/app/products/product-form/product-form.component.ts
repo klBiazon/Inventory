@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { DisplayImageService } from './../../services/display-image.service'
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ErrorHandlerService } from './../../services/error-handler.service';
+import { FormGroup, FormControl, Validators, NgForm, FormGroupDirective } from '@angular/forms';
 
 import { Products } from './../products.model';
 import { ProductsService } from '../products.service';
 import { mimeType } from './../../services/mime-type.validator';
+import { ActivatedRoute, ParamMap } from "@angular/router";
 
 @Component({
   selector: 'app-product-form',
@@ -13,11 +15,16 @@ import { mimeType } from './../../services/mime-type.validator';
 })
 export class ProductFormComponent implements OnInit {
 
-  products: Products;
-
   form: FormGroup;
+  product_id;
+  productInfo;
+  formMode = 'Add';
+  defaultImage = './../../../assets/defaultImg.png';
 
-  constructor(public displayImageService: DisplayImageService) { }
+  constructor(private productsService: ProductsService,
+    private errorHandlerService: ErrorHandlerService,
+    public displayImageService: DisplayImageService,
+    public route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -29,21 +36,79 @@ export class ProductFormComponent implements OnInit {
         asyncValidators: [mimeType]
       })
     });
+    this.resetForm();
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has("product_id")) {
+        this.formMode = 'Save Changes';
+        this.product_id = paramMap.get('product_id'); 
+        this.productsService.get(this.product_id)
+          .subscribe((res: Products) => {
+            this.setFormValues(res);
+            this.displayImageService.URL = res.imgUrl;
+          }, error => {
+            this.errorHandlerService.handleError(error);
+          });
+      } else {
+        this.formMode = 'Add';
+        this.product_id = null;
+      }
+    });
+  }
 
-    // this.form.setValue({
-    //   'title': 'Sample',
-    //   'imgUrl': 'image'
-    // });
+  setFormValues(val) {
+    this.form.setValue({
+      'name': val.name,
+      'imgUrl': val.imgUrl
+    });
   }
 
   imagePicked(file: File) {
     if (file) {
       this.form.patchValue({imgUrl: file});
-      this.form.updateValueAndValidity();        
+      this.form.updateValueAndValidity();
     }
   }
 
-  submit(form) {
-    console.log(form);
+  submit(form: FormGroupDirective) {
+    if(form.invalid) {
+      return;
+    }
+
+    const productData = new FormData();
+    if (this.formMode === 'Add') {
+      productData.append("name", form.value.name);
+      productData.append("imgUrl", form.value.imgUrl, form.value.name);
+      this.productsService.post(productData)
+        .subscribe(res => {
+          this.productInfo = res['product'];
+          this.resetForm();
+          document.getElementById('confirmationModal').click();
+        }, error => this.errorHandlerService.handleError(error));
+    } else {
+      productData.append("id", this.product_id);
+      productData.append("name", form.value.name);
+      if (typeof form.value.imgUrl === 'string') {
+        productData.append("imgUrl", form.value.imgUrl);
+      } else {
+        productData.append("imgUrl", form.value.imgUrl, form.value.name);
+      }
+      
+      this.productsService.put(productData)
+        .subscribe(res => {
+          this.productInfo = form.value;
+          this.resetForm();
+          document.getElementById('confirmationModal').click();
+        }, error => this.errorHandlerService.handleError(error));
+        
+    }
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.form.setValue({
+      'name': null,
+      'imgUrl': null
+    });
+    this.displayImageService.resetDisplayImageService();
   }
 }
