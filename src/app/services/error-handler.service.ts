@@ -11,7 +11,6 @@ export class ErrorHandlerService {
   constructor(private http: HttpClient) { }
 
   handleError(error: HttpErrorResponse) {
-    console.log(error)
     let errorMessage = 'Unknown error!';
     if (error.error instanceof ErrorEvent) {
       // Client-side errors
@@ -20,7 +19,6 @@ export class ErrorHandlerService {
       // Server-side errors
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
-    console.error(errorMessage);
     return throwError(errorMessage);
   }
 }
