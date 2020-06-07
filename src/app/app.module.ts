@@ -11,6 +11,7 @@ import { FooterComponent } from './layouts/footer/footer.component';
 import { ProductListComponent } from './products/product-list/product-list.component';
 import { ProductFormComponent } from './products/product-form/product-form.component';
 import { MainComponent } from './layouts/main/main.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { MainComponent } from './layouts/main/main.component';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
