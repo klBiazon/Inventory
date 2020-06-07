@@ -39,6 +39,9 @@ body::-webkit-scrollbar-thumb
     background-color: #343a40;
     color: #FFFFFF;
 }
+.page-btn.float-right {
+    margin-right: 5px;
+}
 
 .page-btn:hover {
     border-color: #343a40;
@@ -90,4 +93,90 @@ body::-webkit-scrollbar-thumb
 .custom-file-input:active::before {
     background: -webkit-linear-gradient(0deg, #e3e3e3, #f9f9f9);
 }
-  
+
+.error {
+    color: #ff0000;
+
+    small {
+        position: absolute;
+    }
+}
+
+input.ng-invalid.ng-touched {
+    border-color: #ff0000;
+}
+
+input.ng-invalid.ng-touched:focus {
+    box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, 0.5);
+}
+
+.loading-spinner {
+    padding: 80px;
+
+    .spinner-grow {
+        height: 150px;
+        width: 150px;
+    }
+}
+
+input[disabled] {
+    cursor: not-allowed;
+}
+
+.modal-content {
+    border-radius: 0px;
+}
+
+.sign {
+    svg {
+        height: 2em;
+        width: 2em;
+        margin: 0px 15px 0px;
+    }
+    svg.warning {
+        color: #ce0014;
+    }
+    svg.success {
+        color: #1cd21c;
+    }
+}
+
+.image-close {
+    position: absolute;
+    right: 5px;
+}
+
+.avatar {
+    position: relative;
+    max-height: 100px;
+    min-width: 100px;
+}
+
+.product-info {
+    background: #f7f7f7;
+}
+
+.list-pagination {
+    top: 20px;
+    position: relative;
+}
+
+.pagination {
+    .page-item.active {
+        .page-link {
+            background-color: #343a40;
+            color: #FFFFFF;    
+        }
+    }
+    .page-link {
+        border: 0px;
+        color: black;
+    }
+    .page-link:hover {
+        background-color: #343a40;
+        color: #FFFFFF; 
+    }
+    .page-link[aria-disabled="true"] {
+        background-color: #f7f7f7;
+    }
+}
