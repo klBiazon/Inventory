@@ -1,6 +1,5 @@
 export interface Products {
-    // id?: number;
+    _id?: number;
     imgUrl?: string;
     name?: string;
-    // price?: number;
 }
