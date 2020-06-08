@@ -1,1 +1,104 @@
-<p>product-form works!</p>
+<div class="">
+    <div class="card border-light mb-3 product-container">
+        <div class="card-header">
+            <div class="col-md-12 col-lg-10 offset-lg-1">
+                <h2 class="no-margin">{{(formMode === 'Add' ? formMode : 'Edit') + ' Product'}}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-10 offset-lg-1">
+        <div class="card border-light mb-3">
+            <div class="card-header product-form">
+                <form [formGroup]="form" #productForm="ngForm" (ngSubmit)="submit(productForm)">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-12">
+                            Product Name:
+                            <input name="name"
+                                formControlName="name"
+                                type="text"
+                                class="form-control"
+                                placeholder="Product Name">
+                                <div class="error" *ngIf="form.get('name').invalid && form.get('name').touched">
+                                    <small *ngIf="form.get('name').errors?.required">This field is required.</small>
+                                    <small *ngIf="form.get('name').errors?.minlength">Product name should be 3 characters in minimum.</small>
+                                </div>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-12">
+                            Upload an Image:
+                            <div class="error image-error" *ngIf="form.get('imgUrl').invalid && form.get('imgUrl').touched">
+                                <small *ngIf="form.get('imgUrl').errors?.required">Product Image is required.</small>
+                            </div>
+                            <br>
+                        </label>
+                        <div id="imgUrl"
+                            name="imgUrl" 
+                            class="custom-file-input"
+                            type="button"
+                            (click)="filePicker.click()">
+                        </div>
+                        <input #filePicker class="file-picker" type="file" accept="image/*"
+                            (change)="imagePicked(displayImageService.preview($event))">
+                            <span class="image-name">{{displayImageService.fileName}}</span>
+                        <div class="col-sm-12">
+                            <img [src]="displayImageService.URL" height="150" *ngIf="displayImageService.URL">
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <button [disabled]="form.invalid" class="btn page-btn float-right" type="submit">
+                            {{ formMode }}
+                        </button>
+                        <button class="btn page-btn float-right" routerLink="/products" (click)="resetForm()">
+                            Cancel
+                        </button>
+                        <button type="button" id="confirmationModal" class="invisible" 
+                            data-toggle="modal" data-target="#confirmation" data-backdrop="static">
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Confirmation modal -->
+<div class="modal fade" id="confirmation" tabindex="-1" role="dialog" aria-labelledby="confirmationLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationLabel">Success</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" routerLink="/products">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="sign">
+                    <svg class="bi bi-exclamation-circle-fill success" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                  </svg>
+                    This product has been successfully 
+                    {{ formMode === 'Add' ? 'added!' :  'edited!' }}
+                </p>
+                <table class="table table-borderless product-info">
+                    <tbody>
+                        <tr>
+                            <td style="width: 1em">
+                                <img class="avatar img-thumbnail"
+                                    [src]="productInfo?.imgUrl ? productInfo?.imgUrl : defaultImage"/>
+                            </td>
+                            <td>
+                                <strong>Product name:&nbsp;</strong>
+                                <p>{{productInfo?.name}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn page-btn" data-dismiss="modal" routerLink="/products">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

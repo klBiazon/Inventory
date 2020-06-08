@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ErrorHandlerService } from './../../services/error-handler.service';
+import { ProductsService } from './../products.service';
+
+import { Products } from './../products.model';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-product-list',
@@ -7,43 +12,52 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductListComponent implements OnInit {
 
-  products;
+  modalProductInfo;
+  imageClicked;
+  products: Products[] = [];
+  isLoading: boolean;
+  defaultImage = './../../../assets/defaultImg.png';
 
-  constructor() { }
+  //PAGINATION
+  totalCount;
+  pagination = {
+    page: 1,
+    pageSize: 5
+  };
+
+  constructor(private productsService: ProductsService, 
+      private errorHandlerService: ErrorHandlerService) { }
 
   ngOnInit(): void {
-    this.products = [
-      {
-        "id": 1,
-        "imgUrl": "https://guesseu.scene7.com/is/image/GuessEU/M63H24W7JF0-L302-ALTGHOST?wid=1500&fmt=jpeg&qlt=80&op_sharpen=0&op_usm=1.0,1.0,5,0&iccEmbed=0",
-        "name": "CHECK PRINT SHIRT",
-        "price": 110
-      },
-      {
-        "id": 2,
-        "imgUrl": "https://guesseu.scene7.com/is/image/GuessEU/FLGLO4FAL12-BEIBR?wid=700&amp;fmt=jpeg&amp;qlt=80&amp;op_sharpen=0&amp;op_usm=1.0,1.0,5,0&amp;iccEmbed=0",
-        "name": "GLORIA HIGH LOGO SNEAKER",
-        "price": 91
-      },
-      {
-        "id": 3,
-        "imgUrl": "https://guesseu.scene7.com/is/image/GuessEU/HWVG6216060-TAN?wid=700&amp;fmt=jpeg&amp;qlt=80&amp;op_sharpen=0&amp;op_usm=1.0,1.0,5,0&amp;iccEmbed=0",
-        "name": "CATE RIGID BAG",
-        "price": 94.5
-      },
-      {
-        "id": 4,
-        "imgUrl": "http://guesseu.scene7.com/is/image/GuessEU/WC0001FMSWC-G5?wid=520&fmt=jpeg&qlt=80&op_sharpen=0&op_usm=1.0,1.0,5,0&iccEmbed=0",
-        "name": "GUESS CONNECT WATCH",
-        "price": 438.9
-      },
-      {
-        "id": 5,
-        "imgUrl": "https://guesseu.scene7.com/is/image/GuessEU/AW6308VIS03-SAP?wid=700&amp;fmt=jpeg&amp;qlt=80&amp;op_sharpen=0&amp;op_usm=1.0,1.0,5,0&amp;iccEmbed=0",
-        "name": "'70s RETRO GLAM KEFIAH",
-        "price": 20
-      }
-  ];
+    this.getProducts();
   }
 
+  getProducts() {
+    this.isLoading = true;
+    this.productsService.get(null, this.pagination)
+      .subscribe(res => {
+        this.products = res['products'];
+        this.totalCount = res['total'];
+        this.isLoading = false;
+      }, error => this.errorHandlerService.handleError(error));
+  }
+
+  toConfirmDelete(product) {
+    this.modalProductInfo = product;
+    setTimeout(function (){ //had to user 'setTimeout' as the modal takes time to appear
+        $('#delete').focus();   
+    }, 500);
+  }
+
+  showImage(imgUrl) {
+    this.imageClicked = imgUrl;
+  }
+
+  deleteProduct(productId) {
+    this.productsService.delete(productId)
+      .subscribe(res => {
+        this.getProducts();
+        document.getElementById('closeModal').click(); //Close modal
+      }, error => this.errorHandlerService.handleError(error));
+  }
 }
