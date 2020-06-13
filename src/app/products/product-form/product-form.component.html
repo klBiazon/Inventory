@@ -86,7 +86,8 @@
                         <tr>
                             <td style="width: 1em">
                                 <img class="avatar img-thumbnail"
-                                    [src]="productInfo?.imgUrl ? productInfo?.imgUrl : defaultImage"/>
+                                    [src]="productInfo?.imgUrl ? productInfo?.imgUrl : defaultImage"
+                                    onerror="this.src='./../../../assets/defaultImg.png'"/>
                             </td>
                             <td>
                                 <strong>Product name:&nbsp;</strong>

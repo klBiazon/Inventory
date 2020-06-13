@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
+@Injectable()
 export class ApiService {
-  constructor(private SERVER_URL: string, private http: HttpClient) { }
+  constructor(@Inject(String) private SERVER_URL: string, private http: HttpClient) { }
 
   get(id ?: string, pagination ?: any) {
     return this.http.get(this.SERVER_URL + (id ? '/' + id : '')
@@ -23,6 +24,11 @@ export class ApiService {
 
   delete(id) {
     return this.http.delete(this.SERVER_URL + '/' + id)
-      .pipe(map(res => res));;
+      .pipe(map(res => res));
+  }
+
+  user(action: string, userObj) {
+    return this.http.post(this.SERVER_URL + '/' + action, userObj)
+      .pipe(map(res => res));
   }
 }
