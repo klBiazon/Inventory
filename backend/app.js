@@ -8,10 +8,11 @@ const databaseName = 'Inventory';
 const connectionURL = `mongodb://localhost:27017/${databaseName}`;
 
 //ROUTES
-productsRoutes = require('./products/products.routes');
+const productsRoutes = require('./products/products.routes');
+const userRoutes = require('./user/user.routes');
 
 //CONNECT
-mongoose.connect(connectionURL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(connectionURL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
   .then(() => {
     console.log("MongoDB Connected...");
   })
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -40,5 +41,6 @@ app.use((req, res, next) => {
 
 //ADDING ROUTES
 app.use('/api/products', productsRoutes);
+app.use('/api/user', userRoutes);
 
 module.exports = app;

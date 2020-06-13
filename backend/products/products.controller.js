@@ -23,7 +23,7 @@ module.exports = {
     productQuery.find()
       .then(result => {
         fetchedResults = result;
-        return Product.count();
+        return Product.countDocuments();
       })
       .then(count => {
         res.status(200).json({
