@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const multer = require("multer");
+const checkAuth = require('../middleware/check-auth');
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
@@ -32,8 +33,8 @@ const controller = require('./products.controller');
 
 router.get('', controller.getAll);
 router.get('/:id', controller.get);
-router.post('', multer({ storage: storage }).single("imgUrl"), controller.post);
-router.put('/:id',  multer({ storage: storage }).single("imgUrl"), controller.put);
-router.delete('/:id', controller.delete);
+router.post('', checkAuth, multer({ storage: storage }).single("imgUrl"), controller.post);
+router.put('/:id', checkAuth, multer({ storage: storage }).single("imgUrl"), controller.put);
+router.delete('/:id', checkAuth, controller.delete);
 
 module.exports = router;
