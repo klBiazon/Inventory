@@ -1,0 +1,39 @@
+<div class="col-sm-8 offset-sm-2 display-center">
+    <div class="jumbotron">
+        <form (submit)="onSignup(formSignup)" #formSignup="ngForm">
+            <div class="form-group">
+                <label for="firstName">
+                    First Name
+                    <input name="firstName" type="text" class="form-control" placeholder="First name"
+                        ngModel #firstNameInput="ngModel" required>
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="lastName">
+                    Last Name
+                    <input name="lastName" type="text" class="form-control" placeholder="Last name"
+                        ngModel #lastNameInput="ngModel" required>
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="email">
+                    Email
+                    <input name="email" type="email" class="form-control" placeholder="Email"
+                        ngModel #emailInput="ngModel" required email>
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="password">
+                    Password
+                    <input name="password" type="password" class="form-control" placeholder="Password"
+                        ngModel #passwordInput="ngModel" required>
+                </label>
+            </div>
+            <div class="form-group">
+                <button class="btn page-btn" type="submit">
+                    Sign up
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
