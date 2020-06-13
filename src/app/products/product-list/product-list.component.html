@@ -40,7 +40,8 @@
                                         <td style="width: 1em">
                                             <img class="avatar img-thumbnail"
                                                 [src]="product.imgUrl ? product.imgUrl : defaultImage"
-                                                data-toggle="modal" data-target="#imageModal" (click)="showImage(product.imgUrl)"/>
+                                                data-toggle="modal" data-target="#imageModal" (click)="showImage(product.imgUrl)"
+                                                onerror="this.src='./../../../assets/defaultImg.png'"/>
                                         </td>
                                         <td>
                                             <strong>Product name:&nbsp;</strong>
@@ -110,7 +111,8 @@
                         <tr>
                             <td style="width: 1em">
                                 <img class="avatar img-thumbnail"
-                                    [src]="modalProductInfo?.imgUrl ? modalProductInfo?.imgUrl : defaultImage"/>
+                                    [src]="modalProductInfo?.imgUrl ? modalProductInfo?.imgUrl : defaultImage"
+                                    onerror="this.src='./../../../assets/defaultImg.png'"/>
                             </td>
                             <td>
                                 <strong>Product name:&nbsp;</strong>
@@ -136,7 +138,8 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <img class="img-thumbnail"
-                [src]="imageClicked ? imageClicked : defaultImage"/>
+                [src]="imageClicked ? imageClicked : defaultImage"
+                onerror="this.src='./../../../assets/defaultImg.png'"/>
         </div>
     </div>
 </div>
