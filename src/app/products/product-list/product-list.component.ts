@@ -1,22 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ErrorHandlerService } from './../../services/error-handler.service';
 import { ProductsService } from './../products.service';
 
 import { Products } from './../products.model';
 import * as $ from 'jquery';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.less']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
 
   modalProductInfo;
   imageClicked;
   products: Products[] = [];
   isLoading: boolean;
   defaultImage = './../../../assets/defaultImg.png';
+ 
+  //AUTHENTICATION
+  isAuthenticated = false;
+  private authListenerSubs: Subscription;
 
   //PAGINATION
   totalCount;
@@ -26,10 +32,15 @@ export class ProductListComponent implements OnInit {
   };
 
   constructor(private productsService: ProductsService, 
-      private errorHandlerService: ErrorHandlerService) { }
+      private errorHandlerService: ErrorHandlerService,
+      private authService: AuthService) { }
 
   ngOnInit(): void {
     this.getProducts();
+  }
+
+  ngOnDestroy(): void {
+    this.authListenerSubs.unsubscribe();
   }
 
   getProducts() {
@@ -40,6 +51,11 @@ export class ProductListComponent implements OnInit {
         this.totalCount = res['total'];
         this.isLoading = false;
       }, error => this.errorHandlerService.handleError(error));
+    this.isAuthenticated = this.authService.getIsAuth();
+    this.authListenerSubs = this.authService.getAuthStatusListener()
+      .subscribe(isAuthenticated => {
+        this.isAuthenticated = isAuthenticated;
+      });
   }
 
   toConfirmDelete(product) {
