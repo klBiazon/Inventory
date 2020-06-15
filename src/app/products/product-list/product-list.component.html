@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="col-md-12 col-lg-10 offset-lg-1">
                 <h2 class="no-margin">Products</h2>
-                <button class="btn add-btn page-btn" routerLink="/products/add">+ Add Product</button>
+                <button *ngIf="isAuthenticated" class="btn add-btn page-btn" routerLink="/products/add">+ Add Product</button>
             </div>
         </div>
         <div class="col-md-12 col-lg-10 offset-lg-1">
@@ -47,7 +47,7 @@
                                             <strong>Product name:&nbsp;</strong>
                                             <p>{{product.name}}</p>
                                         </td>
-                                        <td class="product-crud">
+                                        <td class="product-crud" *ngIf="isAuthenticated">
                                             <button type="button" class="btn float-right page-btn" (click)="toConfirmDelete(product)" 
                                                 data-toggle="modal" data-target="#deleteModal">
                                                 <svg class="bi bi-trash" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +70,7 @@
                 </div>
             </div>
             
-            <ngb-pagination *ngIf="products.length > 0" 
+            <ngb-pagination *ngIf="products.length > 0 && totalCount >= pagination.pageSize" 
                 [collectionSize]="totalCount" 
                 [(page)]="pagination.page" 
                 [maxSize]="5" 
