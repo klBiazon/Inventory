@@ -9,7 +9,7 @@ import { AuthGuard } from './auth/auth-guard';
 import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [homeRoute, ...productsRoute, loginRoute, signupRoute,
-  { path: '**', component: HomeComponent } // Redirect if the URL is not registered within the app
+  { path: '**', component: HomeComponent, canActivate: [AuthGuard] } // Redirect if the URL is not registered within the app
 ];
 
 @NgModule({
