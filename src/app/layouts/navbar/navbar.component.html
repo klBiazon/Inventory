@@ -35,6 +35,7 @@
             <li *ngIf="!userAuthenticated" class="nav-item active">
                 <a class="nav-link" routerLink="/login">Login</a>
             </li>
+            <span class="greetings" *ngIf="userAuthenticated">Hi {{ userData['firstName'] }}!</span>
             <button (click)="onLogout()" *ngIf="userAuthenticated" class="btn logout-btn">
                 Logout
             </button>

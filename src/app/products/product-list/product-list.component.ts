@@ -53,8 +53,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }, error => this.errorHandlerService.handleError(error));
     this.isAuthenticated = this.authService.getIsAuth();
     this.authListenerSubs = this.authService.getAuthStatusListener()
-      .subscribe(isAuthenticated => {
-        this.isAuthenticated = isAuthenticated;
+      .subscribe(res => {
+        this.isAuthenticated = res.isAuthenticated;
       });
   }
 
