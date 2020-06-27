@@ -51,10 +51,24 @@ module.exports = {
         
         res.status(200).json({
           token: token,
-          expiresIn: 3600
+          expiresIn: 3600,
+          userId : userResult._id
         })
       }).catch(err => {
         return authFailed(res);
       })
+  },
+
+  getUser : (req, res) => {
+    User.findById(req.params.id)
+      .then(user => {
+        res.status(200).json({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+        });
+      }).catch(err => {
+        res.status(404).json({ message: "Not Found!" })
+      });
   }
 }
