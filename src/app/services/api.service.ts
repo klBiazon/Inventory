@@ -7,8 +7,8 @@ export class ApiService {
   constructor(@Inject(String) private SERVER_URL: string, private http: HttpClient) { }
 
   get(id ?: string, pagination ?: any) {
-    return this.http.get(this.SERVER_URL + (id ? '/' + id : '')
-     + `?page=${pagination?.page}&pageSize=${pagination?.pageSize}`)
+    return this.http.get(this.SERVER_URL + (id ? '/' + id : '') + 
+      (pagination ? '' : `?page=${pagination?.page}&pageSize=${pagination?.pageSize}`))
       .pipe(map(res => res));
   }
 
