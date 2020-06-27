@@ -53,7 +53,7 @@ module.exports = {
     const url = req.protocol + "://" + req.get("host");
     req.body.imgUrl = url + "/images/" + req.file.filename;
     const product = createProductObj(req.body);
-    
+    product.createdBy = req.tokenData.userId;
     product.save()
       .then(result => {
         res.status(201).json({
@@ -74,23 +74,30 @@ module.exports = {
     product = new Product({
       _id: req.body.id,
       name: req.body.name,
-      imgUrl: req.body.imgUrl
+      imgUrl: req.body.imgUrl,
+      createdBy: req.tokenData.userId
     });
     
-    Product.updateOne({ _id: req.params.id }, product)
+    Product.updateOne({ _id: req.params.id, createdBy: req.tokenData.userId }, product)
       .then(result => {
-        res.status(201).json({
-          message: 'Product is updated'
-        });
+        if(result.nModified > 0) {
+          res.status(200).json({ message: 'Product is updated' });
+        } else {
+          res.status(401).json({ message: 'Unauthorized' });
+        }
       }).catch(err => {
         res.status(404).send(err);
       });
   },
 
   delete : (req, res) => {
-    Product.deleteOne({ _id: req.params.id })
+    Product.deleteOne({ _id: req.params.id, createdBy: req.tokenData.userId })
       .then(result => {
-        res.status(200).json({message: 'Product deleted'});
+        if(result.n > 0) {
+          res.status(200).json({message: 'Product deleted'});
+        } else {
+          res.status(401).json({ message: 'Unauthorized' });
+        }
       }).catch(err => {
         res.status(404).send(err);
       });
