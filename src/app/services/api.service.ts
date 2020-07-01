@@ -8,7 +8,7 @@ export class ApiService {
 
   get(id ?: string, pagination ?: any) {
     return this.http.get(this.SERVER_URL + (id ? '/' + id : '') + 
-      (pagination ? '' : `?page=${pagination?.page}&pageSize=${pagination?.pageSize}`))
+      (pagination ? `?page=${pagination?.page}&pageSize=${pagination?.pageSize}` : ''))
       .pipe(map(res => res));
   }
 
