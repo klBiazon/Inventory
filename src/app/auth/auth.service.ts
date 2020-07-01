@@ -15,6 +15,7 @@ export class AuthService extends ApiService {
   private token: string;
   private isAuthenticated = false;
   private authStatusListener = new Subject<{ isAuthenticated: boolean, userId: string }>();
+  private loginListener = new Subject<boolean>();
   private tokenTimer;
   private userId: string;
   
@@ -37,6 +38,10 @@ export class AuthService extends ApiService {
 
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
+  }
+
+  getLoginListener() {
+    return this.loginListener.asObservable();
   }
 
   createUser(user: AuthData) {
@@ -67,9 +72,13 @@ export class AuthService extends ApiService {
           const now = new Date();
           const expirationDate = new Date(now.getTime() + (expiresIn * 1000));
           this.saveAuthData(this.token, expirationDate, this.userId);
-          this.router.navigate(['/']);
+          this.loginListener.next(true);
+          this.router.navigate(['/products']);
         }  
-      }, error => this.errorHandlerService.handleError(error));;
+      }, error => {
+        this.loginListener.next(false);
+        this.errorHandlerService.handleError(error);
+      });
   }
 
   logout() {
