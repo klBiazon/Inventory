@@ -1,39 +1,145 @@
-<div class="col-sm-8 offset-sm-2 display-center">
-    <div class="jumbotron">
-        <form (submit)="onSignup(formSignup)" #formSignup="ngForm">
-            <div class="form-group">
-                <label for="firstName">
-                    First Name
-                    <input name="firstName" type="text" class="form-control" placeholder="First name"
-                        ngModel #firstNameInput="ngModel" required>
-                </label>
-            </div>
-            <div class="form-group">
-                <label for="lastName">
-                    Last Name
-                    <input name="lastName" type="text" class="form-control" placeholder="Last name"
-                        ngModel #lastNameInput="ngModel" required>
-                </label>
-            </div>
-            <div class="form-group">
-                <label for="email">
-                    Email
-                    <input name="email" type="email" class="form-control" placeholder="Email"
-                        ngModel #emailInput="ngModel" required email>
-                </label>
-            </div>
-            <div class="form-group">
-                <label for="password">
-                    Password
-                    <input name="password" type="password" class="form-control" placeholder="Password"
-                        ngModel #passwordInput="ngModel" required>
-                </label>
-            </div>
-            <div class="form-group">
-                <button class="btn page-btn" type="submit">
-                    Sign up
-                </button>
-            </div>
-        </form>
+<div class="card border-light mb-3 product-container">
+    <div class="card-header">
+        <div class="col-md-12 col-lg-10 offset-lg-1">
+            <h2 class="no-margin">Sign Up</h2>
+        </div>
     </div>
 </div>
+
+<div class="col-md-12 col-lg-10 offset-lg-1">
+    <div class="card border-light mb-3">
+        <div class="card-header product-form p-5 border">
+            <form [formGroup]="form" (ngSubmit)="onSignup(formSignup)" #formSignup="ngForm">
+                <div class="form-group">
+                    <label class="w-100" for="firstName">
+                        First Name
+                        <input formControlName="firstName"
+                                name="firstName"
+                                type="text"
+                                class="form-control"
+                                placeholder="First name">
+                        <div class="error" *ngIf="form.get('firstName').invalid && form.get('firstName').touched">
+                            <small *ngIf="form.get('firstName').errors?.required">First name is required.</small>
+                            <small *ngIf="form.get('firstName').errors?.minlength">First name should be 3 characters in minimum.</small>
+                        </div>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="w-100" for="lastName">
+                        Last Name
+                        <input formControlName="lastName"
+                                name="lastName"
+                                type="text"
+                                class="form-control"
+                                placeholder="Last name">
+                        <div class="error" *ngIf="form.get('lastName').invalid && form.get('lastName').touched">
+                            <small *ngIf="form.get('lastName').errors?.required">Last name is required.</small>
+                            <small *ngIf="form.get('lastName').errors?.minlength">Last name should be 3 characters in minimum.</small>
+                        </div>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="w-100" for="email">
+                        Email
+                        <input formControlName="email"
+                            name="email"
+                            type="email"
+                            class="form-control"
+                            placeholder="Email">
+                            <div class="error" *ngIf="form.get('email').invalid && form.get('email').touched">
+                                <small *ngIf="form.get('email').errors?.required">Email is required.</small>
+                                <small *ngIf="form.get('email').errors?.email">Not a valid email.</small>
+                                <small *ngIf="form.get('email').errors?.emailInUse">This email is already taken.</small>
+                            </div>
+                    </label>
+                </div>
+                <div formGroupName="passwordGroup">
+                    <div class="form-group">
+                        <label class="w-100" for="password">
+                            Password
+                            <input formControlName="password"
+                                name="password"
+                                [type]="!seePass ? 'password' : 'text'"
+                                class="form-control"
+                                placeholder="Password">
+                            <svg *ngIf="!seePass" (click)="seePass = true" width="1em" height="1em" viewBox="0 0 16 16" class="eye-mask bi bi-eye-slash-fill pointer" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.79 12.912l-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z"/>
+                                <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708l-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829z"/>
+                                <path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/>
+                            </svg>
+                            <svg *ngIf="seePass" (click)="seePass = false" width="1em" height="1em" viewBox="0 0 16 16" class="eye-mask bi bi-eye-fill pointer" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                            </svg>
+                            <div class="error" *ngIf="form.get('passwordGroup.password').invalid && form.get('passwordGroup.password').touched">
+                                <small *ngIf="form.get('passwordGroup.password').errors?.required">Password is required.</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="w-100" for="password">
+                            Confirm Password
+                            <input formControlName="confirmPassword"
+                                name="confirmPassword"
+                                [type]="!seeConfirmPass ? 'password' : 'text'"
+                                class="form-control"
+                                placeholder="Confirm Password">
+                            <svg *ngIf="!seeConfirmPass" (click)="seeConfirmPass = true" width="1em" height="1em" viewBox="0 0 16 16" class="eye-mask bi bi-eye-slash-fill pointer" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.79 12.912l-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z"/>
+                                <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708l-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829z"/>
+                                <path fill-rule="evenodd" d="M13.646 14.354l-12-12 .708-.708 12 12-.708.708z"/>
+                            </svg>
+                            <svg *ngIf="seeConfirmPass" (click)="seeConfirmPass = false" width="1em" height="1em" viewBox="0 0 16 16" class="eye-mask bi bi-eye-fill pointer" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                            </svg>
+                            <div class="error" *ngIf="form.get('passwordGroup.confirmPassword').invalid && form.get('passwordGroup.confirmPassword').touched">
+                                <small *ngIf="form.get('passwordGroup.confirmPassword').errors?.required">This field is required.</small>
+                                <small *ngIf="form.get('passwordGroup.confirmPassword').errors?.doNotMatch">Your password and confirmation password should match.</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-3 form-group">
+                    <button [disabled]="form.invalid" class="btn page-btn float-right" type="submit">
+                        Sign up
+                    </button>
+                    <button class="btn page-btn float-right" routerLink="/">
+                        Cancel
+                    </button>
+                    <button id="showSuccessModal" class="invisible" data-toggle="modal" data-target="#successModal"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Success modal -->
+<div class="modal fade" id="successModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationLabel">Success</h5>
+                <button routerLink="/login" type="button"
+                    class="close" data-dismiss="modal" 
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="sign">
+                    <svg class="bi bi-exclamation-circle-fill success" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                  </svg>
+                  User successfully created!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn page-btn" data-dismiss="modal" routerLink="/login">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<router-outlet></router-outlet>
