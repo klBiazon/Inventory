@@ -6,7 +6,7 @@ import { FormGroup, FormControl, Validators, NgForm, FormGroupDirective } from '
 import { Products } from './../products.model';
 import { ProductsService } from '../products.service';
 import { mimeType } from './../../services/mime-type.validator';
-import { ActivatedRoute, ParamMap } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 @Component({
   selector: 'app-product-form',
@@ -24,7 +24,8 @@ export class ProductFormComponent implements OnInit {
   constructor(private productsService: ProductsService,
     private errorHandlerService: ErrorHandlerService,
     public displayImageService: DisplayImageService,
-    public route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -46,6 +47,7 @@ export class ProductFormComponent implements OnInit {
             this.setFormValues(res);
             this.displayImageService.URL = res.imgUrl;
           }, error => {
+            this.router.navigate(['/products']);
             this.errorHandlerService.handleError(error);
           });
       } else {
