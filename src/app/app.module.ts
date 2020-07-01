@@ -1,20 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
-import { ProductListComponent } from './products/product-list/product-list.component';
-import { ProductFormComponent } from './products/product-form/product-form.component';
 import { MainComponent } from './layouts/main/main.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { LoginComponent } from './auth/login/login.component';
-import { SignupComponent } from './auth/signup/signup.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
+import { AuthModule } from './auth/auth.module';
+
+import { ProductModule } from './products/product.module';
 
 @NgModule({
   declarations: [
@@ -22,19 +19,14 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     HomeComponent,
     NavbarComponent,
     FooterComponent,
-    ProductListComponent,
-    ProductFormComponent,
-    MainComponent,
-    LoginComponent,
-    SignupComponent
+    MainComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbModule
+    AuthModule,
+    ProductModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
