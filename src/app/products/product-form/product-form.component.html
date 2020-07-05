@@ -45,9 +45,6 @@
                         <button class="btn page-btn float-right" routerLink="/products" (click)="resetForm()">
                             Cancel
                         </button>
-                        <button class="btn page-btn float-right" (click)="open(spinner)">
-                            spin
-                        </button>
                         <button type="button" id="confirmationModal" class="invisible" 
                             data-toggle="modal" data-target="#confirmation" data-backdrop="static">
                         </button>
@@ -99,14 +96,3 @@
         </div>
     </div>
 </div>
-
-<!-- Loading modal -->
-<ng-template #spinner>
-    <div class="modal-body">
-        <div class="">
-            <div class="spinner-border text-light spinner" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-    </div>
-</ng-template>
