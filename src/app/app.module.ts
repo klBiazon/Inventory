@@ -12,6 +12,8 @@ import { AuthInterceptor } from './auth/auth-interceptor';
 import { AuthModule } from './auth/auth.module';
 
 import { ProductModule } from './products/product.module';
+import { LoadingComponent } from './layouts/loading/loading.component';
+import { PageHeaderComponent } from './layouts/page-header/page-header.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { ProductModule } from './products/product.module';
     HomeComponent,
     NavbarComponent,
     FooterComponent,
-    MainComponent
+    MainComponent,
+    LoadingComponent,
+    PageHeaderComponent
   ],
   imports: [
     BrowserModule,
