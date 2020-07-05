@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { DisplayImageService } from './../../services/display-image.service'
 import { ErrorHandlerService } from './../../services/error-handler.service';
-import { FormGroup, FormControl, Validators, NgForm, FormGroupDirective } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormGroupDirective } from '@angular/forms';
 
 import { Products } from './../products.model';
 import { ProductsService } from '../products.service';
 import { mimeType } from './../../services/mime-type.validator';
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { LayoutsService } from 'src/app/layouts/layouts.service';
 
 @Component({
   selector: 'app-product-form',
@@ -20,12 +21,14 @@ export class ProductFormComponent implements OnInit {
   productInfo;
   formMode = 'Add';
   defaultImage = './../../../assets/defaultImg.png';
+  stillLoading = false;
 
   constructor(private productsService: ProductsService,
     private errorHandlerService: ErrorHandlerService,
     public displayImageService: DisplayImageService,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private layoutsService: LayoutsService) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -41,6 +44,7 @@ export class ProductFormComponent implements OnInit {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has("product_id")) {
         this.formMode = 'Save Changes';
+        this.layoutsService.setPageHeader('Edit Product');
         this.product_id = paramMap.get('product_id'); 
         this.productsService.get(this.product_id)
           .subscribe((res: Products) => {
@@ -52,6 +56,7 @@ export class ProductFormComponent implements OnInit {
           });
       } else {
         this.formMode = 'Add';
+        this.layoutsService.setPageHeader('Add Product');
         this.product_id = null;
       }
     });
@@ -76,6 +81,7 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
+    this.stillLoading = true;
     const productData = new FormData();
     if (this.formMode === 'Add') {
       productData.append("name", form.value.name);
@@ -85,6 +91,7 @@ export class ProductFormComponent implements OnInit {
           this.productInfo = res['product'];
           this.resetForm();
           document.getElementById('confirmationModal').click();
+          this.stillLoading = false;
         }, error => this.errorHandlerService.handleError(error));
     } else {
       productData.append("id", this.product_id);
@@ -100,8 +107,8 @@ export class ProductFormComponent implements OnInit {
           this.productInfo = form.value;
           this.resetForm();
           document.getElementById('confirmationModal').click();
+          this.stillLoading = false;
         }, error => this.errorHandlerService.handleError(error));
-        
     }
   }
 
