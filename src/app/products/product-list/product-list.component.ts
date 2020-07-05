@@ -6,6 +6,7 @@ import { Products } from './../products.model';
 import * as $ from 'jquery';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Subscription } from 'rxjs';
+import { LayoutsService } from 'src/app/layouts/layouts.service';
 
 @Component({
   selector: 'app-product-list',
@@ -17,9 +18,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   modalProductInfo;
   imageClicked;
   products: Products[] = [];
-  isLoading: boolean;
   defaultImage = './../../../assets/defaultImg.png';
- 
+  stillLoading = false;
+  private productGet: Subscription;
+
   //AUTHENTICATION
   isAuthenticated = false;
   private authListenerSubs: Subscription;
@@ -33,23 +35,29 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(private productsService: ProductsService, 
       private errorHandlerService: ErrorHandlerService,
-      private authService: AuthService) { }
+      private authService: AuthService,
+      private layoutsService: LayoutsService) { }
 
   ngOnInit(): void {
+    this.layoutsService.setPageHeader('Products');
     this.getProducts();
   }
 
   ngOnDestroy(): void {
     this.authListenerSubs.unsubscribe();
+    this.productGet.unsubscribe();
+    this.layoutsService.setIsLoading(false);
   }
 
   getProducts() {
-    this.isLoading = true;
-    this.productsService.get(null, this.pagination)
+    this.layoutsService.setIsLoading(true);
+    this.stillLoading = true;
+    this.productGet = this.productsService.get(null, this.pagination)
       .subscribe(res => {
+        this.stillLoading = false;
         this.products = res['products'];
         this.totalCount = res['total'];
-        this.isLoading = false;
+        this.layoutsService.setIsLoading(false);
       }, error => this.errorHandlerService.handleError(error));
     this.isAuthenticated = this.authService.getIsAuth();
     this.authListenerSubs = this.authService.getAuthStatusListener()
