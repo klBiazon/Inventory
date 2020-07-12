@@ -7,6 +7,8 @@ import { ErrorHandlerService } from '../services/error-handler.service';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -21,7 +23,7 @@ export class AuthService extends ApiService {
   
   constructor(http: HttpClient, private errorHandlerService: ErrorHandlerService,
     private router: Router) {
-    super('http://localhost:3000/api/user', http)
+    super(environment.SERVER_URL + 'user', http)
   }
 
   getToken() {
