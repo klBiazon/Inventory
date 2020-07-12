@@ -1,0 +1,11 @@
+<ngb-pagination 
+    [collectionSize]="totalCount" 
+    [(page)]="pagination.page" 
+    [maxSize]="5" 
+    [pageSize]="pagination.pageSize"
+    [rotate]="true" 
+    [ellipses]="false" 
+    [boundaryLinks]="true"
+    (pageChange)="paginationCall()"
+    class="list-pagination d-flex justify-content-center">
+</ngb-pagination>
