@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { Subscription, Subject, BehaviorSubject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { LayoutsService } from '../layouts.service';
 import { AuthService } from 'src/app/auth/auth.service';
 
