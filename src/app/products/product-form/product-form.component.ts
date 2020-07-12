@@ -105,6 +105,7 @@ export class ProductFormComponent implements OnInit {
       this.productsService.put(productData)
         .subscribe(res => {
           this.productInfo = form.value;
+          this.productInfo['imgUrl'] = res['imgUrl']
           this.resetForm();
           document.getElementById('confirmationModal').click();
           this.stillLoading = false;
