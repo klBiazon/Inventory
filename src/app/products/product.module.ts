@@ -7,11 +7,13 @@ import { RouterModule } from '@angular/router';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductFormComponent } from './product-form/product-form.component';
 import { ProductsRoutingModule } from './products.routing.module';
+import { PaginationComponent } from '../layouts/pagination/pagination.component';
 
 @NgModule({
   declarations: [
     ProductListComponent,
-    ProductFormComponent
+    ProductFormComponent,
+    PaginationComponent
   ],
   imports: [
     CommonModule,

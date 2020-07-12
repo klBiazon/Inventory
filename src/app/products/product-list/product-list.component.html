@@ -1,5 +1,8 @@
 <div class="">
     <div class="col-md-12 col-lg-10 offset-lg-1 mt-n3">
+        <div *ngIf="products.length === 0 && !stillLoading" class="empty-products">
+            <h5>No products added yet!</h5>
+        </div>
         <div *ngIf="products.length > 0 && !stillLoading">
             <div [id]="'accordion' + i" *ngFor="let product of products; let i = index;">
                 <div class="card-header product-title no-padding" [id]="'heading' + i">
@@ -57,23 +60,8 @@
                 </div>
             </div>
         </div>
-        
-        <ngb-pagination *ngIf="products.length > 0 && totalCount >= pagination.pageSize && !stillLoading"
-            [collectionSize]="totalCount" 
-            [(page)]="pagination.page" 
-            [maxSize]="5" 
-            [pageSize]="pagination.pageSize"
-            [rotate]="true" 
-            [ellipses]="false" 
-            [boundaryLinks]="true"
-            (pageChange)="getProducts()"
-            class="list-pagination d-flex justify-content-center">
-        </ngb-pagination>
-        <div *ngIf="products.length === 0 && !stillLoading" class="empty-products">
-            <h5>No products added yet!</h5>
-        </div>
-
     </div>
+    <app-pagination></app-pagination>
 </div>
   
 <!-- Delete Modal -->
@@ -110,8 +98,8 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button id="closeModal" type="button" class="btn page-btn" data-dismiss="modal">Cancel</button>
-                <button id="delete" type="button" class="btn page-btn" (click)="deleteProduct(modalProductInfo?._id)">Delete</button>
+                <button id="closeModal" #closeModal type="button" class="btn page-btn" data-dismiss="modal">Cancel</button>
+                <button id="delete" #delete type="button" class="btn page-btn" (click)="deleteProduct(modalProductInfo?._id)">Delete</button>
             </div>
         </div>
     </div>
