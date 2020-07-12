@@ -14,7 +14,7 @@ module.exports = {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-        firstName: req.body.firstName,
+          firstName: req.body.firstName,
           lastName: req.body.lastName,
           email: req.body.email,
           password: hash
@@ -46,7 +46,7 @@ module.exports = {
           return authFailed(res);
         }
         const token = jwt.sign({ email: userResult.email, userId: userResult._id },
-                        'this_is_for_temporary',
+                        process.env.JWT_KEY,
                         { expiresIn: '1h' });
         
         res.status(200).json({
