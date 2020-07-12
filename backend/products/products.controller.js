@@ -13,7 +13,6 @@ module.exports = {
     const currentPage = +req.query.page;
     const productQuery = Product.find();
     let fetchedResults;
-
     if (pageSize && currentPage) {
       productQuery
         .skip(pageSize * (currentPage - 1))
@@ -30,23 +29,45 @@ module.exports = {
           products: fetchedResults,
           total: count
         });
-      })
-      .catch(err => {
+      }).catch(err => {
         res.status(404).send(err);
       });
   },
 
   get : (req, res) => {
-    Product.findById(req.params.id)
-      .then(result => {
-        if(result) {
-          res.status(200).json(result);
-        } else {
-          res.status(404).json({ message: 'Product not found!' });
-        }
-      }).catch(err => {
-        res.status(400).send(err);
-      })
+    const pageSize = +req.query.pageSize;
+    const currentPage = +req.query.page;
+
+    if (pageSize && currentPage) {
+      const productQuery = Product.find({createdBy: req.params.id})
+        .skip(pageSize * (currentPage - 1))
+        .limit(pageSize);
+
+      productQuery.find()
+        .then(result => {
+          fetchedResults = result;
+          return Product.find({createdBy: req.params.id}).countDocuments();
+        })
+        .then(count => {
+          res.status(200).json({
+            products: fetchedResults,
+            total: count
+          });
+        }).catch(err => {
+          res.status(404).send(err);
+        });
+    } else {
+      Product.findById(req.params.id)
+        .then(result => {
+          if(result) {
+            res.status(200).json(result);
+          } else {
+            res.status(404).json({ message: 'Product not found!' });
+          }
+        }).catch(err => {
+          res.status(400).send(err);
+        })
+    }
   },
 
   post : (req, res) => {
@@ -77,14 +98,10 @@ module.exports = {
       imgUrl: req.body.imgUrl,
       createdBy: req.tokenData.userId
     });
-    
+    console.log(product);
     Product.updateOne({ _id: req.params.id, createdBy: req.tokenData.userId }, product)
       .then(result => {
-        if(result.nModified > 0) {
-          res.status(200).json({ message: 'Product is updated' });
-        } else {
-          res.status(401).json({ message: 'Unauthorized' });
-        }
+        res.status(200).json({ message: 'Product is updated', imgUrl: product.imgUrl });
       }).catch(err => {
         res.status(404).send(err);
       });
