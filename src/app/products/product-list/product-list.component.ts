@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ErrorHandlerService } from './../../services/error-handler.service';
 import { ProductsService } from './../products.service';
-
 import { Products } from './../products.model';
-import * as $ from 'jquery';
+
 import { AuthService } from 'src/app/auth/auth.service';
-import { Subscription } from 'rxjs';
 import { LayoutsService } from 'src/app/layouts/layouts.service';
+
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -21,17 +21,19 @@ export class ProductListComponent implements OnInit, OnDestroy {
   defaultImage = './../../../assets/defaultImg.png';
   stillLoading = false;
   private productGet: Subscription;
+  
+  @ViewChild('closeModal')
+  closeModal?: ElementRef;
+  @ViewChild('delete')
+  delete?: ElementRef;
 
   //AUTHENTICATION
   isAuthenticated = false;
   private authListenerSubs: Subscription;
 
   //PAGINATION
-  totalCount;
-  pagination = {
-    page: 1,
-    pageSize: 5
-  };
+  private paginationSubs: Subscription;
+  paginationParams: Object;
 
   constructor(private productsService: ProductsService, 
       private errorHandlerService: ErrorHandlerService,
@@ -40,23 +42,34 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.layoutsService.setPageHeader('Products');
-    this.getProducts();
+    this.pagination();
   }
 
   ngOnDestroy(): void {
-    this.authListenerSubs.unsubscribe();
-    this.productGet.unsubscribe();
+    this.authListenerSubs ? this.authListenerSubs.unsubscribe(): null;
+    this.productGet ? this.productGet.unsubscribe() : null;
+    this.paginationSubs ? this.paginationSubs.unsubscribe() : null;
     this.layoutsService.setIsLoading(false);
+  }
+
+  pagination() {
+    this.paginationSubs = this.layoutsService.getPaginationEvent()
+      .subscribe(pagination => {
+        this.paginationParams = pagination;
+        this.getProducts();
+      });
+    this.paginationParams = this.layoutsService.getPagination();
+    this.getProducts();
   }
 
   getProducts() {
     this.layoutsService.setIsLoading(true);
     this.stillLoading = true;
-    this.productGet = this.productsService.get(null, this.pagination)
+    this.productGet = this.productsService.get(this.authService.getUserId(), this.paginationParams)
       .subscribe(res => {
         this.stillLoading = false;
         this.products = res['products'];
-        this.totalCount = res['total'];
+        this.layoutsService.setCountPagination(res['total'], this.products.length);
         this.layoutsService.setIsLoading(false);
       }, error => this.errorHandlerService.handleError(error));
     this.isAuthenticated = this.authService.getIsAuth();
@@ -67,9 +80,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   toConfirmDelete(product) {
+    let deleteElem = this.delete.nativeElement;
     this.modalProductInfo = product;
     setTimeout(function (){ //had to user 'setTimeout' as the modal takes time to appear
-        $('#delete').focus();   
+      deleteElem.focus();
     }, 500);
   }
 
@@ -81,7 +95,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.productsService.delete(productId)
       .subscribe(res => {
         this.getProducts();
-        document.getElementById('closeModal').click(); //Close modal
+        this.closeModal.nativeElement.click();
       }, error => this.errorHandlerService.handleError(error));
   }
 }
