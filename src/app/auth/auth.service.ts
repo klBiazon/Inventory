@@ -7,6 +7,8 @@ import { ErrorHandlerService } from '../services/error-handler.service';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -15,12 +17,13 @@ export class AuthService extends ApiService {
   private token: string;
   private isAuthenticated = false;
   private authStatusListener = new Subject<{ isAuthenticated: boolean, userId: string }>();
+  private loginListener = new Subject<boolean>();
   private tokenTimer;
   private userId: string;
   
   constructor(http: HttpClient, private errorHandlerService: ErrorHandlerService,
     private router: Router) {
-    super('http://localhost:3000/api/user', http)
+    super(environment.SERVER_URL + 'user', http)
   }
 
   getToken() {
@@ -37,6 +40,10 @@ export class AuthService extends ApiService {
 
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
+  }
+
+  getLoginListener() {
+    return this.loginListener.asObservable();
   }
 
   createUser(user: AuthData) {
@@ -67,9 +74,13 @@ export class AuthService extends ApiService {
           const now = new Date();
           const expirationDate = new Date(now.getTime() + (expiresIn * 1000));
           this.saveAuthData(this.token, expirationDate, this.userId);
-          this.router.navigate(['/']);
+          this.loginListener.next(true);
+          this.router.navigate(['/products']);
         }  
-      }, error => this.errorHandlerService.handleError(error));;
+      }, error => {
+        this.loginListener.next(false);
+        this.errorHandlerService.handleError(error);
+      });
   }
 
   logout() {

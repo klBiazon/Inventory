@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ErrorHandlerService } from './../../services/error-handler.service';
 import { ProductsService } from './../products.service';
-
 import { Products } from './../products.model';
-import * as $ from 'jquery';
+
 import { AuthService } from 'src/app/auth/auth.service';
+import { LayoutsService } from 'src/app/layouts/layouts.service';
+
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -17,51 +18,84 @@ export class ProductListComponent implements OnInit, OnDestroy {
   modalProductInfo;
   imageClicked;
   products: Products[] = [];
-  isLoading: boolean;
   defaultImage = './../../../assets/defaultImg.png';
- 
+  stillLoading = false;
+  private getProductSubs: Subscription;
+
+  private deleteSubs: Subscription;
+  result: boolean;
+  
+  @ViewChild('closeModal')
+  closeModal?: ElementRef;
+  @ViewChild('delete')
+  delete?: ElementRef;
+
   //AUTHENTICATION
   isAuthenticated = false;
   private authListenerSubs: Subscription;
 
   //PAGINATION
-  totalCount;
-  pagination = {
-    page: 1,
-    pageSize: 5
-  };
+  private paginationSubs: Subscription;
+  paginationParams: Object;
 
   constructor(private productsService: ProductsService, 
       private errorHandlerService: ErrorHandlerService,
-      private authService: AuthService) { }
+      private authService: AuthService,
+      private layoutsService: LayoutsService) { }
 
   ngOnInit(): void {
-    this.getProducts();
-  }
-
-  ngOnDestroy(): void {
-    this.authListenerSubs.unsubscribe();
-  }
-
-  getProducts() {
-    this.isLoading = true;
-    this.productsService.get(null, this.pagination)
+    this.layoutsService.setPageHeader('Products');
+    this.getProductSubs = this.productsService.getProductListener()
       .subscribe(res => {
+        this.stillLoading = false;
         this.products = res['products'];
-        this.totalCount = res['total'];
-        this.isLoading = false;
-      }, error => this.errorHandlerService.handleError(error));
-    this.isAuthenticated = this.authService.getIsAuth();
+        this.layoutsService.setCountPagination(res['total'], this.products.length);
+        this.layoutsService.setIsLoading(false);
+      });
+    this.deleteSubs = this.productsService.getResult()
+      .subscribe(res => {
+        if(res) {
+          this.layoutsService.resetPagination();
+          this.closeModal.nativeElement.click();
+        }
+    });
     this.authListenerSubs = this.authService.getAuthStatusListener()
       .subscribe(res => {
         this.isAuthenticated = res.isAuthenticated;
       });
+    this.pagination();
+  }
+
+  ngOnDestroy(): void {
+    this.authListenerSubs ? this.authListenerSubs.unsubscribe(): null;
+    this.getProductSubs ? this.getProductSubs.unsubscribe() : null;
+    this.paginationSubs ? this.paginationSubs.unsubscribe() : null;
+    this.deleteSubs ? this.deleteSubs.unsubscribe() : null;
+    this.layoutsService.setIsLoading(false);
+  }
+
+  pagination() {
+    this.paginationSubs = this.layoutsService.getPaginationEvent()
+      .subscribe(pagination => {
+        this.paginationParams = pagination;
+        this.getProducts();
+      });
+    this.paginationParams = this.layoutsService.getPagination();
+    this.getProducts();
+  }
+
+  getProducts() {
+    this.layoutsService.setIsLoading(true);
+    this.stillLoading = true;
+    this.productsService.getProducts(this.authService.getUserId(), this.paginationParams);
+    this.isAuthenticated = this.authService.getIsAuth();
   }
 
   toConfirmDelete(product) {
+    let deleteElem = this.delete.nativeElement;
     this.modalProductInfo = product;
     setTimeout(function (){ //had to user 'setTimeout' as the modal takes time to appear
-        $('#delete').focus();   
+      deleteElem.focus();
     }, 500);
   }
 
@@ -70,10 +104,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   deleteProduct(productId) {
-    this.productsService.delete(productId)
-      .subscribe(res => {
-        this.getProducts();
-        document.getElementById('closeModal').click(); //Close modal
-      }, error => this.errorHandlerService.handleError(error));
+    this.productsService.deleteProduct(productId);
   }
 }

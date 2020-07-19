@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ApiService } from 'src/app/services/api.service'
-import { Subscription, Observable } from 'rxjs';  
+import { Subscription } from 'rxjs';  
 import { HttpClient } from '@angular/common/http';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
