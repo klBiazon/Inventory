@@ -20,7 +20,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   products: Products[] = [];
   defaultImage = './../../../assets/defaultImg.png';
   stillLoading = false;
-  private productGet: Subscription;
+  private getProductSubs: Subscription;
+
+  private deleteSubs: Subscription;
+  result: boolean;
   
   @ViewChild('closeModal')
   closeModal?: ElementRef;
@@ -42,13 +45,32 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.layoutsService.setPageHeader('Products');
+    this.getProductSubs = this.productsService.getProductListener()
+      .subscribe(res => {
+        this.stillLoading = false;
+        this.products = res['products'];
+        this.layoutsService.setCountPagination(res['total'], this.products.length);
+        this.layoutsService.setIsLoading(false);
+      });
+    this.deleteSubs = this.productsService.getResult()
+      .subscribe(res => {
+        if(res) {
+          this.layoutsService.resetPagination();
+          this.closeModal.nativeElement.click();
+        }
+    });
+    this.authListenerSubs = this.authService.getAuthStatusListener()
+      .subscribe(res => {
+        this.isAuthenticated = res.isAuthenticated;
+      });
     this.pagination();
   }
 
   ngOnDestroy(): void {
     this.authListenerSubs ? this.authListenerSubs.unsubscribe(): null;
-    this.productGet ? this.productGet.unsubscribe() : null;
+    this.getProductSubs ? this.getProductSubs.unsubscribe() : null;
     this.paginationSubs ? this.paginationSubs.unsubscribe() : null;
+    this.deleteSubs ? this.deleteSubs.unsubscribe() : null;
     this.layoutsService.setIsLoading(false);
   }
 
@@ -65,18 +87,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   getProducts() {
     this.layoutsService.setIsLoading(true);
     this.stillLoading = true;
-    this.productGet = this.productsService.get(this.authService.getUserId(), this.paginationParams)
-      .subscribe(res => {
-        this.stillLoading = false;
-        this.products = res['products'];
-        this.layoutsService.setCountPagination(res['total'], this.products.length);
-        this.layoutsService.setIsLoading(false);
-      }, error => this.errorHandlerService.handleError(error));
+    this.productsService.getProducts(this.authService.getUserId(), this.paginationParams);
     this.isAuthenticated = this.authService.getIsAuth();
-    this.authListenerSubs = this.authService.getAuthStatusListener()
-      .subscribe(res => {
-        this.isAuthenticated = res.isAuthenticated;
-      });
   }
 
   toConfirmDelete(product) {
@@ -92,10 +104,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   deleteProduct(productId) {
-    this.productsService.delete(productId)
-      .subscribe(res => {
-        this.getProducts();
-        this.closeModal.nativeElement.click();
-      }, error => this.errorHandlerService.handleError(error));
+    this.productsService.deleteProduct(productId);
   }
 }
