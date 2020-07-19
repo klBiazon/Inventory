@@ -1,34 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, TemplateRef } from '@angular/core';
 import { DisplayImageService } from './../../services/display-image.service'
-import { ErrorHandlerService } from './../../services/error-handler.service';
 import { FormGroup, FormControl, Validators, FormGroupDirective } from '@angular/forms';
 
-import { Products } from './../products.model';
 import { ProductsService } from '../products.service';
 import { mimeType } from './../../services/mime-type.validator';
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { LayoutsService } from 'src/app/layouts/layouts.service';
+import { Subscription } from 'rxjs';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-product-form',
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.less']
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
+  formValues;
   product_id;
   productInfo;
   formMode = 'Add';
   defaultImage = './../../../assets/defaultImg.png';
   stillLoading = false;
 
+  private getProductSubs: Subscription;
+
+  @ViewChild('confirmation') confirmationModal: NgbModalRef;
+
   constructor(private productsService: ProductsService,
-    private errorHandlerService: ErrorHandlerService,
     public displayImageService: DisplayImageService,
     private route: ActivatedRoute,
     private router: Router,
-    private layoutsService: LayoutsService) { }
+    private layoutsService: LayoutsService,
+    private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -40,26 +46,47 @@ export class ProductFormComponent implements OnInit {
         asyncValidators: [mimeType]
       })
     });
+    this.setSubscriptions();
     this.resetForm();
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has("product_id")) {
         this.formMode = 'Save Changes';
         this.layoutsService.setPageHeader('Edit Product');
         this.product_id = paramMap.get('product_id'); 
-        this.productsService.get(this.product_id)
-          .subscribe((res: Products) => {
-            this.setFormValues(res);
-            this.displayImageService.URL = res.imgUrl;
-          }, error => {
-            this.router.navigate(['/products']);
-            this.errorHandlerService.handleError(error);
-          });
+        this.productsService.getProducts(this.product_id);
       } else {
         this.formMode = 'Add';
         this.layoutsService.setPageHeader('Add Product');
         this.product_id = null;
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.getProductSubs.unsubscribe();
+  }
+
+  setSubscriptions() {
+    this.getProductSubs = this.productsService.getProductListener()
+      .subscribe(res => {
+        if (this.formMode === 'Add') {
+          this.productInfo = res;
+          this.resetForm();
+          this.stillLoading = false;
+          this.openModal();
+        } else {
+          if(!res.message) {
+            this.setFormValues(res);
+            this.displayImageService.URL = res.imgUrl;
+          } else {
+            this.productInfo = this.form.value;
+            this.productInfo['imgUrl'] = res.imgUrl;
+            this.resetForm();
+            this.openModal();
+            this.stillLoading = false;
+          }
+        }
+      });
   }
 
   setFormValues(val) {
@@ -86,13 +113,7 @@ export class ProductFormComponent implements OnInit {
     if (this.formMode === 'Add') {
       productData.append("name", form.value.name);
       productData.append("imgUrl", form.value.imgUrl, form.value.name);
-      this.productsService.post(productData)
-        .subscribe(res => {
-          this.productInfo = res['product'];
-          this.resetForm();
-          document.getElementById('confirmationModal').click();
-          this.stillLoading = false;
-        }, error => this.errorHandlerService.handleError(error));
+      this.productsService.addProduct(productData);
     } else {
       productData.append("id", this.product_id);
       productData.append("name", form.value.name);
@@ -101,15 +122,8 @@ export class ProductFormComponent implements OnInit {
       } else {
         productData.append("imgUrl", form.value.imgUrl, form.value.name);
       }
-      
-      this.productsService.put(productData)
-        .subscribe(res => {
-          this.productInfo = form.value;
-          this.productInfo['imgUrl'] = res['imgUrl']
-          this.resetForm();
-          document.getElementById('confirmationModal').click();
-          this.stillLoading = false;
-        }, error => this.errorHandlerService.handleError(error));
+      this.formValues = form;
+      this.productsService.updateProduct(productData);
     }
   }
 
@@ -120,5 +134,13 @@ export class ProductFormComponent implements OnInit {
       'imgUrl': null
     });
     this.displayImageService.resetDisplayImageService();
+  }
+
+  openModal() {
+    const modalRef = this.modalService.open(this.confirmationModal).result.then((result) => {
+      this.router.navigate(['/products']);
+    }, (reason) => {
+      this.router.navigate(['/products']);
+    });
   }
 }
