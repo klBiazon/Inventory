@@ -1,4 +1,4 @@
-<ngb-pagination 
+<ngb-pagination *ngIf="totalCount > 5"
     [collectionSize]="totalCount" 
     [(page)]="pagination.page" 
     [maxSize]="5" 
