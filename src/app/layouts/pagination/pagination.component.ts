@@ -13,6 +13,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   pagination;
   totalCount;
   dataLength;
+  init = 0;
   private countSubs: Subscription;
 
   isLoggedIn;
@@ -26,6 +27,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
       .subscribe(pagination => {
         this.totalCount = pagination.totalCount;
         this.dataLength = pagination.dataLength;
+        this.pagination = this.layoutsService.getPagination();
       });
     this.pagination = this.layoutsService.getPagination();
     this.paginationCall();
@@ -43,6 +45,9 @@ export class PaginationComponent implements OnInit, OnDestroy {
   }
 
   paginationCall() {
-    this.layoutsService.setPaginationEvent(this.pagination);
+    if(this.init > 0) {
+      this.layoutsService.setPaginationEvent(this.pagination);
+    }
+    this.init++;
   }
 }

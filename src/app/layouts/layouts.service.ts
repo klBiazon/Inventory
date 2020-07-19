@@ -86,4 +86,12 @@ export class LayoutsService {
       'pageSize': value.pageSize
     };
   }
+
+  resetPagination() {
+    this.paginationParams = {
+      page: 1,
+      pageSize: 5
+    };
+    this.setPaginationEvent(this.paginationParams);
+  }
 }
