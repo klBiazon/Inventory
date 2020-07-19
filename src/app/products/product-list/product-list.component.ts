@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { ErrorHandlerService } from './../../services/error-handler.service';
 import { ProductsService } from './../products.service';
 import { Products } from './../products.model';
 
@@ -38,8 +37,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private paginationSubs: Subscription;
   paginationParams: Object;
 
-  constructor(private productsService: ProductsService, 
-      private errorHandlerService: ErrorHandlerService,
+  constructor(private productsService: ProductsService,
       private authService: AuthService,
       private layoutsService: LayoutsService) { }
 
