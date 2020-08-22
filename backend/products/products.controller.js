@@ -97,8 +97,7 @@ module.exports = {
       name: req.body.name,
       imgUrl: req.body.imgUrl,
       createdBy: req.tokenData.userId
-    });
-    console.log(product);
+    }); 
     Product.updateOne({ _id: req.params.id, createdBy: req.tokenData.userId }, product)
       .then(result => {
         res.status(200).json({ message: 'Product is updated', imgUrl: product.imgUrl });
