@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const mongoose = require('mongoose');
-const databaseName = 'Inventory';
-const connectionURL = `mongodb://localhost:27017/${databaseName}`;
+const connectionURL = process.env.DEV_CONNECTION_URL;
+
 
 //ROUTES
 const productsRoutes = require('./products/products.routes');
