@@ -1,6 +1,5 @@
 {
   "env": {
-    "PROD_CONNECTION_URL": "mongodb+srv://klbiazon:Alexanderpower12345@inventory.frrzu.mongodb.net/Inventory?retryWrites=true&w=majority",
     "DEV_CONNECTION_URL": "mongodb://localhost:27017/Inventory",
     "JWT_KEY": "this_is_for_temporary"
   }
