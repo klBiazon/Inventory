@@ -73,6 +73,7 @@
                             </svg>
                             <div class="error" *ngIf="form.get('passwordGroup.password').invalid && form.get('passwordGroup.password').touched">
                                 <small *ngIf="form.get('passwordGroup.password').errors?.required">Password is required.</small>
+                                <small *ngIf="form.get('passwordGroup.password').errors?.minlength">Password should be 3 characters in minimum.</small>
                             </div>
                         </label>
                     </div>
@@ -107,37 +108,29 @@
                     <button class="btn page-btn float-right" routerLink="/">
                         Cancel
                     </button>
-                    <button id="showSuccessModal" class="invisible" data-toggle="modal" data-target="#successModal"></button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
 <!-- Success modal -->
-<div class="modal fade" id="successModal" tabindex="-1" data-backdrop="static" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmationLabel">Success</h5>
-                <button routerLink="/login" type="button"
-                    class="close" data-dismiss="modal" 
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p class="sign">
-                    <svg class="bi bi-exclamation-circle-fill success" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                  </svg>
-                  User successfully created!
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn page-btn" data-dismiss="modal" routerLink="/login">OK</button>
-            </div>
-        </div>
+<ng-template #success let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="successLabel">Success</h5>
+        <button type="button" class="close" aria-label="Close"  (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <p class="sign">
+            <svg class="bi bi-exclamation-circle-fill success" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+          </svg>
+          User successfully created!
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn page-btn" ngbAutofocus (click)="modal.dismiss()">OK</button>
+    </div>
+</ng-template>
