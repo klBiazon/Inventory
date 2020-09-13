@@ -4,6 +4,7 @@ import { ApiService } from 'src/app/services/api.service'
 import { Subscription } from 'rxjs';  
 import { HttpClient } from '@angular/common/http';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -24,7 +25,7 @@ export class NavbarComponent extends ApiService  implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService, private errorHandlerService: ErrorHandlerService,
           http: HttpClient) { 
-    super('http://localhost:3000/api/user', http);
+    super(environment.SERVER_URL + 'user', http);
   }
 
   ngOnInit() {
