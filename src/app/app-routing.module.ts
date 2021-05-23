@@ -12,6 +12,10 @@ const routes: Routes = [homeRoute,
     path: 'products', canActivateChild: [AuthGuard], loadChildren: () => import('./products/product.module')
       .then(m => m.ProductModule)
   },
+  { 
+    path: 'category', canActivateChild: [AuthGuard], loadChildren: () => import('./category/category.module')
+      .then(m => m.CategoryModule)
+  },
   {
     path: '', loadChildren: () => import('./auth/auth.module')
       .then(m => m.AuthModule)
