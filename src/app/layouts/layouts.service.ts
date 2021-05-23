@@ -80,11 +80,17 @@ export class LayoutsService {
     return this.paginationParams;
   }
 
-  setPagination(value: {page: number, pageSize: number}) {
-    this.paginationParams = {
-      'page': value.page,
-      'pageSize': value.pageSize
-    };
+  setPagination(value?: {page: number, pageSize: number}) {
+    if(value) {
+      this.paginationParams = {
+        ...value
+      };  
+    } else {
+      this.paginationParams = {
+        page: 1,
+        pageSize: 5
+      }; 
+    }
   }
 
   resetPagination() {
