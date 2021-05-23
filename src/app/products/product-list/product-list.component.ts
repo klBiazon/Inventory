@@ -43,6 +43,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.layoutsService.setPageHeader('Products');
+    this.layoutsService.setPagination();
     this.getProductSubs = this.productsService.getProductListener()
       .subscribe(res => {
         this.stillLoading = false;
