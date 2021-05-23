@@ -14,6 +14,8 @@ import { AuthInterceptor } from './auth/auth-interceptor';
 
 import { PageHeaderComponent } from './layouts/page-header/page-header.component';
 import { LoadingComponent } from './layouts/loading/loading.component';
+import { CategoryModule } from './category/category.module';
+import { PaginationModule } from './layouts/pagination/pagination.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { LoadingComponent } from './layouts/loading/loading.component';
     AppRoutingModule,
     HttpClientModule,
     AuthModule,
-    ProductModule
+    ProductModule,
+    CategoryModule,
+    PaginationModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
