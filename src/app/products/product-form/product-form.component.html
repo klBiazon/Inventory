@@ -2,11 +2,11 @@
     <div class="col-md-12 col-lg-10 offset-lg-1">
         <div class="card border-light mb-3">
             <div class="card-header product-form">
-                <form [formGroup]="form" #productForm="ngForm" (ngSubmit)="submit(productForm)">
+                <form *ngIf='form' [formGroup]="form" #productForm="ngForm" (ngSubmit)="submit(productForm)">
                     <div class="form-group">
                         <label for="name" class="col-sm-12">
                             Product Name:
-                            <input name="name"
+                            <input id="name" name="name"
                                 formControlName="name"
                                 type="text"
                                 class="form-control"
@@ -16,6 +16,57 @@
                                     <small *ngIf="form.get('name').errors?.minlength">Product name should be 3 characters in minimum.</small>
                                 </div>
                         </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="price" class="col-md-4">
+                            Product Price:
+                            <div class="input-group">
+                                <span class="input-group-text dollar-sign"
+                                    [class.error]="form.get('price').invalid && form.get('price').touched"
+                                    id="dollar-sign">
+                                    $
+                                </span>
+                                <input id="price" name="price"
+                                    formControlName="price"
+                                    type="text"
+                                    class="form-control pl-5 rounded"
+                                    placeholder="Price"
+                                    aria-label="Username" 
+                                    aria-describedby="dollar-sign">
+                                <div class="error price-error-padding col-12 pl-0 position-absolute" *ngIf="form.get('price').invalid && form.get('price').touched">
+                                    <small *ngIf="form.get('price').errors?.required">This field is required.</small>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-sm-12">
+                            Product Description:
+                            <textarea id="description" name="description"
+                                formControlName="description"
+                                type="text"
+                                class="form-control mt-1"
+                                placeholder="Product Description"
+                                rows="3"></textarea>
+                            
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-12">
+                            In What Category:
+                        </label>
+                        <div class="pl-4">
+                            <div class="form-check" *ngFor="let category of categoryList; let i = index;">
+                                <label class="form-check-label" [for]="category._id">
+                                    <input class="form-check-input" type="checkbox" 
+                                        [id]="category._id"
+                                        [value]="category._id"
+                                        [checked]="setCategoryChecked(category._id)"
+                                        (change)="categoryChecked($event)">
+                                        {{category.name}}
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-12">
