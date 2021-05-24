@@ -47,8 +47,9 @@ module.exports = {
         }
         const token = jwt.sign({ email: userResult.email, userId: userResult._id },
                         process.env.JWT_KEY,
-                        { expiresIn: '1h' });
-        
+                        // { expiresIn: '1h' });
+                        { expiresIn: '10h' });
+                        
         res.status(200).json({
           token: token,
           expiresIn: 3600,
@@ -67,6 +68,15 @@ module.exports = {
             lastName: user.lastName,
             email: user.email
         });
+      }).catch(err => {
+        res.status(404).json({ message: "Not Found!" })
+      });
+  },
+
+  getAll : (req, res) => {
+    User.find()
+      .then(user => {
+        res.status(200).json(user);
       }).catch(err => {
         res.status(404).json({ message: "Not Found!" })
       });
