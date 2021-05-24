@@ -6,8 +6,8 @@ const app = express();
 const mongoose = require('mongoose');
 const connectionURL = process.env.DEV_CONNECTION_URL;
 
-
 //ROUTES
+const categoryRoutes = require('./category/category.routes');
 const productsRoutes = require('./products/products.routes');
 const userRoutes = require('./user/user.routes');
 
@@ -24,6 +24,8 @@ mongoose.connect(connectionURL, { useNewUrlParser: true, useUnifiedTopology: tru
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(express.json({limit: '50mb'}));
+// app.use(express.urlencoded({limit: '50mb'}));
 app.use("/images", express.static(path.join("backend/images")));
 
 app.use((req, res, next) => {
@@ -40,6 +42,7 @@ app.use((req, res, next) => {
 });
 
 //ADDING ROUTES
+app.use('/api/category', categoryRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/user', userRoutes);
 
