@@ -3,7 +3,10 @@ const Product = require('./products.model');
 createProductObj = (body) => {
   return new Product({
     name: body.name,
-    imgUrl: body.imgUrl
+    imgUrl: body.imgUrl,
+    categories: body.categories,
+    price: body.price,
+    description: body.description
   });
 }
 
@@ -75,6 +78,7 @@ module.exports = {
     req.body.imgUrl = url + "/images/" + req.file.filename;
     const product = createProductObj(req.body);
     product.createdBy = req.tokenData.userId;
+    product.dateCreated = new Date();
     product.save()
       .then(result => {
         res.status(201).json({
@@ -92,10 +96,13 @@ module.exports = {
       req.body.imgUrl = url + "/images/" + req.file.filename;
     }
     
-    product = new Product({
+    const product = new Product({
       _id: req.body.id,
       name: req.body.name,
       imgUrl: req.body.imgUrl,
+      price: req.body.price,
+      description: req.body.description,
+      categories: req.body.categories,
       createdBy: req.tokenData.userId
     }); 
     Product.updateOne({ _id: req.params.id, createdBy: req.tokenData.userId }, product)
