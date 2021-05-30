@@ -12,7 +12,7 @@
                             placeholder="Category Name">
                             <div class="error" *ngIf="form.get('name').invalid && form.get('name').touched">
                                 <small *ngIf="form.get('name').errors?.required">This field is required.</small>
-                                <small *ngIf="form.get('name').errors?.minlength">Product name should be 3 characters in minimum.</small>
+                                <small *ngIf="form.get('name').errors?.minlength">Category name should be 3 characters in minimum.</small>
                             </div>
                     </label>
                 </div>
@@ -62,8 +62,14 @@
             <tbody>
                 <tr>
                     <td>
-                        <strong>Category name:&nbsp;</strong>
-                        <p>{{categoryVal?.name}}</p>
+                        <strong>Category name:&nbsp;</strong><br/>
+                        <span>{{categoryVal?.name}}</span>
+                    </td>
+                </tr>
+                <tr *ngIf="categoryVal.description">
+                    <td>
+                        <strong>Category description:&nbsp;</strong>
+                        <p>{{categoryVal?.description}}</p>
                     </td>
                 </tr>
             </tbody>

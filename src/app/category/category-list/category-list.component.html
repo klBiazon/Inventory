@@ -1,5 +1,5 @@
 <div class="col-md-12 col-lg-10 offset-lg-1 mt-n3">
-    <div *ngIf="categories.length === 0 && !stillLoading" class="empty-products">
+    <div *ngIf="categories.length === 0 && !stillLoading" class="empty-fetch">
         <h5>No Categories added yet!</h5>
     </div>
     <div *ngIf="categories.length > 0 && !stillLoading">
@@ -7,8 +7,7 @@
             <tbody>
                 <tr *ngFor="let category of categories; let i = index;">
                     <td>{{ category.name }}</td>
-                    <td class="crud">
-                        <!-- <td class="product-crud" *ngIf="isAuthenticated"> -->
+                    <td class="crud" *ngIf="isAuthenticated">
                         <button type="button" class="btn float-right page-btn" (click)="deleteCategory(category)">
                             <svg class="bi bi-trash" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
@@ -37,12 +36,14 @@
         </button>
     </div>
     <div class="modal-body">
-        <p class="sign">
+        <div class="sign d-flex">
             <svg class="bi bi-exclamation-triangle-fill warning" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
             </svg>
-            Are you sure you want to delete <strong>{{category.name}}</strong>?
-        </p>
+            <span class="ml-3">
+                Are you sure you want to delete <strong>{{category.name}}</strong>?
+            </span>    
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn page-btn" (click)="modal.close();">Cancel</button>
