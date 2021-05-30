@@ -12,7 +12,10 @@ export class LayoutsService {
   private pageHeader: string;
 
   private isLoadingListener = new Subject<boolean>();
-  private isLoading;
+  private isLoading: boolean;
+
+  private activePageListener = new Subject<string>();
+  private activePage: string;
 
   private countForPaginationListener = new Subject<{ totalCount: number, dataLength: number }>();
   private count: Object;
@@ -99,5 +102,14 @@ export class LayoutsService {
       pageSize: 5
     };
     this.setPaginationEvent(this.paginationParams);
+  }
+
+  setActivePage(page: string) {
+    this.activePage = page;
+    this.activePageListener.next(page);
+  }
+
+  getActivePageListener(): Observable<string> {
+    return this.activePageListener.asObservable();
   }
 }
