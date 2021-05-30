@@ -124,7 +124,7 @@ input[disabled] {
 }
 
 .modal-content {
-    border-radius: 0px;
+    border-radius: 8px;
 }
 
 .sign {
@@ -148,8 +148,11 @@ input[disabled] {
 
 .avatar {
     position: relative;
-    max-height: 100px;
     min-width: 100px;
+}
+
+.avatar:hover {
+    cursor: pointer;
 }
 
 .product-info {
@@ -194,6 +197,17 @@ input[disabled] {
 }
   
 @keyframes example {
-0%   {transform: scale(0.5)}
-100% {transform: scale(1)}
+    0%   {transform: scale(0.5)}
+    100% {transform: scale(1)}
+}
+
+.empty-fetch {
+    height: 100px;
+    margin-top: 20px;
+
+    h5 {
+        font-weight: 300;
+        padding-top: 35px;
+        margin-left: 20px;
+    }
 }
