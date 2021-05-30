@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { ErrorHandlerService } from '../services/error-handler.service';
 import { Observable, Subject } from 'rxjs';
+import { Method } from '../constants/method.constants';
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +24,7 @@ export class CategoryService extends ApiService {
     this.get(categoryId, paginationParams)
       .subscribe(res => {
         this.categoriesListener.next({
-          method: 'GET',
+          method: Method.GET,
           category: res
         });
       }, error => {
@@ -36,7 +37,7 @@ export class CategoryService extends ApiService {
     this.post(categoryData)
       .subscribe(res => {
         this.categoriesListener.next({
-          method: 'POST',
+          method: Method.POST,
           category: res['category']
         });
       }, error => {
@@ -48,7 +49,7 @@ export class CategoryService extends ApiService {
     this.put(categoryData)
       .subscribe(res => {
         this.categoriesListener.next({
-          method: 'PUT',
+          method: Method.PUT,
           category: res
         });
       }, error => this.errorHandlerService.handleError(error));
