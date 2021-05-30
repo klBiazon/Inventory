@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { LayoutsService } from 'src/app/layouts/layouts.service';
 import { CategoryService } from '../category.service';
 
+import { Page } from '../../constants/page.constants';
 import { Category } from './../category.model';
 
 @Component({
@@ -35,7 +36,8 @@ export class CategoryListComponent implements OnInit, OnDestroy {
               private modalService: NgbModal) { }
 
   ngOnInit() {
-    this.layoutsService.setPageHeader('Category');
+    this.layoutsService.setActivePage(Page.CATEGORY);
+    this.layoutsService.setPageHeader(Page.CATEGORY);
     this.layoutsService.setPagination();
     this.getCategorySubs = this.categoryService.getCategoriesListener()
       .subscribe(res => {
@@ -48,7 +50,6 @@ export class CategoryListComponent implements OnInit, OnDestroy {
     this.authListenerSubs = this.authService.getAuthStatusListener()
       .subscribe(res => {
         this.isAuthenticated = res.isAuthenticated;
-        console.log(this.isAuthenticated)
       });
     this.getResultListenerSubs = this.categoryService.getResultListener()
       .subscribe(res => {
@@ -76,11 +77,9 @@ export class CategoryListComponent implements OnInit, OnDestroy {
 
   pagination() {
     this.paginationSubs = this.layoutsService.getPaginationEvent()
-      .subscribe(pagination => {
-        // this.paginationParams = pagination;
+      .subscribe(() => {
         this.getCategories();
       });
-    // this.paginationParams = this.layoutsService.getPagination();
     this.getCategories();
   }
 
@@ -88,7 +87,7 @@ export class CategoryListComponent implements OnInit, OnDestroy {
     this.layoutsService.setIsLoading(true);
     this.stillLoading = true;
     this.categoryService.getCategories(this.authService.getUserId(), this.layoutsService.getPagination());
-    // this.isAuthenticated = this.authService.getIsAuth();
+    this.isAuthenticated = this.authService.getIsAuth();
   }
   
   deleteCategory(category) {
@@ -100,9 +99,9 @@ export class CategoryListComponent implements OnInit, OnDestroy {
     this.modalService.open(this.deleteModal, { windowClass: 'modal-holder' }).result
       .then(() => { },
         (reason) => {
-        // console.log('REASON = ',reason)
-        this.categoryService.deleteCategory(reason._id);
-        // this.router.navigate(['/products']);
+          if(reason) {
+            this.categoryService.deleteCategory(reason._id);
+          }
       });
   }
 }
