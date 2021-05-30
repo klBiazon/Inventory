@@ -5,8 +5,10 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { LayoutsService } from 'src/app/layouts/layouts.service';
+import { Page } from 'src/app/constants/page.constants';
 import { Category } from '../category.model';
 import { CategoryService } from '../category.service';
+import { Method } from 'src/app/constants/method.constants';
 
 @Component({
   selector: 'app-category-form',
@@ -33,6 +35,7 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.layoutsService.setActivePage(Page.CATEGORY);
     this.setSubscriptions();
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if(paramMap.has("category_id")) {
@@ -58,22 +61,20 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
       'name': new FormControl(value?.name, {
         validators: [Validators.required, Validators.minLength(3)]
       }),
-      'description': new FormControl(value?.description, {
-        validators: [Validators.required, Validators.minLength(3)]
-      })
+      'description': new FormControl(value?.description ?? '')
     });
   }
   
   setSubscriptions() {
     this.categorySubs = this.categoryService.getCategoriesListener()
       .subscribe(res => {
-        if(res.method === 'GET') {
+        if(res.method === Method.GET) {
           this.setForm(res.category);
-        } else if(res.method === 'POST') {
+        } else if(res.method === Method.POST) {
           this.categoryVal = res.category;
           this.form.reset();
           this.openModal();
-        } else if(res.method === 'PUT') {
+        } else if(res.method === Method.PUT) {
           this.form.reset();
           this.openModal();
         }
