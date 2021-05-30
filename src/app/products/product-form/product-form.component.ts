@@ -9,7 +9,7 @@ import { LayoutsService } from 'src/app/layouts/layouts.service';
 import { Subscription } from 'rxjs';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CategoryService } from 'src/app/category/category.service';
-
+import { Page } from 'src/app/constants/page.constants';
 
 @Component({
   selector: 'app-product-form',
@@ -40,6 +40,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService) { }
 
   ngOnInit(): void {
+    this.layoutsService.setActivePage(Page.PRODUCT);
     this.setForm();
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has("product_id")) {
@@ -71,7 +72,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       'name': new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)]
       }),
-      'price': new FormControl('', {
+      'price': new FormControl(null, {
         validators: [Validators.required]
       }),
       'description': new FormControl(null),
@@ -106,7 +107,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       });
     this.getCategoriesSubs = this.categoryService.getCategoriesListener()
       .subscribe(res => {
-        this.categoryList = res.categories;
+        this.categoryList = res.category.categories;
       });
   }
 
@@ -188,10 +189,44 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     this.displayImageService.resetDisplayImageService();
   }
 
+  validateNumber(event) {
+    const keyCode = event.keyCode;
+    const dotCodes = [110, 190];
+
+    if(dotCodes.includes(keyCode)) {    
+      if(this.form.value.price.indexOf(".") !== -1) {
+        event.preventDefault();
+        return;
+      }
+    }
+
+    const excludedKeys = [8,  9, 37, 39, 46, ...dotCodes];
+
+    if(!((keyCode >= 48 && keyCode <= 57) ||
+        (keyCode >= 96 && keyCode <= 105) ||
+        (excludedKeys.includes(keyCode)))) {
+      event.preventDefault();
+    }
+  }
+
+  onBlur() {
+    const price = this.form.value.price ?? '0';
+    const roundedPrice = Number.parseFloat(price).toFixed(2);
+    const formattedPrice =  roundedPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    this.form.controls.price.setValue(formattedPrice);
+  }
+
+  onFocus() {
+    if(this.form.value.price) {
+      const toNumberPrice = this.form.value.price.replace(/,/g, '');
+      this.form.controls.price.setValue(toNumberPrice);
+    }
+  }
+
   openModal() {
-    const modalRef = this.modalService.open(this.confirmationModal).result.then((result) => {
+    const modalRef = this.modalService.open(this.confirmationModal, { windowClass: 'modal-holder' }).result.then(() => {
       this.router.navigate(['/products']);
-    }, (reason) => {
+    }, () => {
       this.router.navigate(['/products']);
     });
   }

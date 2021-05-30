@@ -32,7 +32,10 @@
                                     class="form-control pl-5 rounded"
                                     placeholder="Price"
                                     aria-label="Username" 
-                                    aria-describedby="dollar-sign">
+                                    aria-describedby="dollar-sign"
+                                    (keydown)="validateNumber($event)"
+                                    (blur)="onBlur()"
+                                    (focus)="onFocus()">
                                 <div class="error price-error-padding col-12 pl-0 position-absolute" *ngIf="form.get('price').invalid && form.get('price').touched">
                                     <small *ngIf="form.get('price').errors?.required">This field is required.</small>
                                 </div>
