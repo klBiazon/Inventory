@@ -4,8 +4,10 @@ import { Products } from './../products.model';
 
 import { AuthService } from 'src/app/auth/auth.service';
 import { LayoutsService } from 'src/app/layouts/layouts.service';
+import { Page } from '../../constants/page.constants';
 
 import { Subscription } from 'rxjs';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product-list',
@@ -23,11 +25,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   private deleteSubs: Subscription;
   result: boolean;
-  
-  @ViewChild('closeModal')
-  closeModal?: ElementRef;
-  @ViewChild('delete')
-  delete?: ElementRef;
+
+  @ViewChild('delete') deleteModal: NgbModalRef;
+  @ViewChild('showImage') showImageModal: NgbModalRef;
 
   //AUTHENTICATION
   isAuthenticated = false;
@@ -39,10 +39,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(private productsService: ProductsService,
       private authService: AuthService,
-      private layoutsService: LayoutsService) { }
+      private layoutsService: LayoutsService,
+      private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.layoutsService.setPageHeader('Products');
+    this.layoutsService.setActivePage(Page.PRODUCT);
+    this.layoutsService.setPageHeader(Page.PRODUCT);
     this.layoutsService.setPagination();
     this.getProductSubs = this.productsService.getProductListener()
       .subscribe(res => {
@@ -55,7 +57,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         if(res) {
           this.layoutsService.resetPagination();
-          this.closeModal.nativeElement.click();
         }
     });
     this.authListenerSubs = this.authService.getAuthStatusListener()
@@ -71,6 +72,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.paginationSubs ? this.paginationSubs.unsubscribe() : null;
     this.deleteSubs ? this.deleteSubs.unsubscribe() : null;
     this.layoutsService.setIsLoading(false);
+    this.modalService.dismissAll();
   }
 
   pagination() {
@@ -90,19 +92,19 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.isAuthenticated = this.authService.getIsAuth();
   }
 
-  toConfirmDelete(product) {
-    let deleteElem = this.delete.nativeElement;
+  openDeleteModal(product) {
     this.modalProductInfo = product;
-    setTimeout(function (){ //had to user 'setTimeout' as the modal takes time to appear
-      deleteElem.focus();
-    }, 500);
+    this.modalService.open(this.deleteModal, { windowClass: 'modal-holder' }).result
+      .then(() => { },
+        (reason) => {
+          if(reason !== 0 && reason !== 1) {
+            this.productsService.deleteProduct(reason);
+          }
+      });
   }
 
-  showImage(imgUrl) {
+  openShowImageModal(imgUrl) {
     this.imageClicked = imgUrl;
-  }
-
-  deleteProduct(productId) {
-    this.productsService.deleteProduct(productId);
+    this.modalService.open(this.showImageModal, { windowClass: 'modal-holder' })
   }
 }

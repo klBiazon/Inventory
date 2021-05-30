@@ -1,6 +1,6 @@
 <div class="">
     <div class="col-md-12 col-lg-10 offset-lg-1 mt-n3">
-        <div *ngIf="products.length === 0 && !stillLoading" class="empty-products">
+        <div *ngIf="products.length === 0 && !stillLoading" class="empty-fetch">
             <h5>No products added yet!</h5>
         </div>
         <div *ngIf="products.length > 0 && !stillLoading">
@@ -31,16 +31,15 @@
                                     <td style="width: 1em">
                                         <img class="avatar img-thumbnail"
                                             [src]="product.imgUrl ? product.imgUrl : defaultImage"
-                                            data-toggle="modal" data-target="#imageModal" (click)="showImage(product.imgUrl)"
-                                            onerror="this.src='./../../../assets/defaultImg.png'"/>
+                                            onerror="this.src='./../../../assets/defaultImg.png'"
+                                            (click)="openShowImageModal(product.imgUrl)"/>
                                     </td>
                                     <td>
                                         <strong>Product name:&nbsp;</strong>
                                         <p>{{product.name}}</p>
                                     </td>
                                     <td class="crud" *ngIf="isAuthenticated">
-                                        <button type="button" class="btn float-right page-btn" (click)="toConfirmDelete(product)" 
-                                            data-toggle="modal" data-target="#deleteModal">
+                                        <button type="button" class="btn float-right page-btn" (click)="openDeleteModal(product)">
                                             <svg class="bi bi-trash" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                                 <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
@@ -65,56 +64,51 @@
 </div>
   
 <!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete product</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p class="sign">
-                    <svg class="bi bi-exclamation-triangle-fill warning" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                    </svg>
-                    Are you sure you want to delete this product?
-                </p>
-                <table class="table table-borderless product-info">
-                    <tbody>
-                        <tr>
-                            <td style="width: 1em">
-                                <img class="avatar img-thumbnail"
-                                    [src]="modalProductInfo?.imgUrl ? modalProductInfo?.imgUrl : defaultImage"
-                                    onerror="this.src='./../../../assets/defaultImg.png'"/>
-                            </td>
-                            <td>
-                                <strong>Product name:&nbsp;</strong>
-                                <p>{{modalProductInfo?.name}}</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button id="closeModal" #closeModal type="button" class="btn page-btn" data-dismiss="modal">Cancel</button>
-                <button id="delete" #delete type="button" class="btn page-btn" (click)="deleteProduct(modalProductInfo?._id)">Delete</button>
-            </div>
-        </div>
+<ng-template #delete let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Delete product</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.close();">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-</div>
+    <div class="modal-body">
+        <p class="sign">
+            <svg class="bi bi-exclamation-triangle-fill warning" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 5zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+            </svg>
+            Are you sure you want to delete this product?
+        </p>
+        <table class="table table-borderless product-info">
+            <tbody>
+                <tr>
+                    <td style="width: 1em">
+                        <img class="avatar img-thumbnail"
+                            [src]="modalProductInfo?.imgUrl ? modalProductInfo?.imgUrl : defaultImage"
+                            onerror="this.src='./../../../assets/defaultImg.png'"/>
+                    </td>
+                    <td>
+                        <strong>Product name:&nbsp;</strong>
+                        <p>{{modalProductInfo?.name}}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn page-btn" (click)="modal.close();">Cancel</button>
+        <button type="button" class="btn page-btn" ngbAutoFocus (click)="modal.dismiss(modalProductInfo?._id)">Delete</button>
+    </div>
+</ng-template>
 
 <!-- Image modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <button type="button" class="close image-close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <img class="img-thumbnail"
-                [src]="imageClicked ? imageClicked : defaultImage"
-                onerror="this.src='./../../../assets/defaultImg.png'"/>
-        </div>
+<ng-template #showImage let-modal>
+    <div class="modal-body p-0 text-center">
+        <button type="button" class="close image-close" (click)="modal.close();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <img class="img-thumbnail"
+            [src]="imageClicked ? imageClicked : defaultImage"
+            onerror="this.src='./../../../assets/defaultImg.png'"
+            ngbAutoFocus/>
     </div>
-</div>
+</ng-template>
