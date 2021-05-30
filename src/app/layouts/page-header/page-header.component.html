@@ -2,8 +2,8 @@
     <div class="card-header">
         <div class="col-md-12 col-lg-10 offset-lg-1">
             <h2 class="no-margin">{{ pageHeader }}</h2>
-            <button *ngIf="pageHeader === 'Products'" class="btn add-btn page-btn" routerLink="/products/add">+ Add Product</button>
-            <button *ngIf="pageHeader === 'Category'" class="btn add-btn page-btn" routerLink="/category/add">+ Add Category</button>
+            <button *ngIf="pageHeader === page.PRODUCT" class="btn add-btn page-btn" routerLink="/products/add">+ Add Product</button>
+            <button *ngIf="pageHeader === page.CATEGORY" class="btn add-btn page-btn" routerLink="/category/add">+ Add Category</button>
         </div>
     </div>
 </div>

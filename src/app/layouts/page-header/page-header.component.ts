@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, AfterViewChecked, ChangeDe
 import { Subscription } from 'rxjs';
 import { LayoutsService } from '../layouts.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { Page } from '../../constants/page.constants';
 
 @Component({
   selector: 'app-page-header',
@@ -15,6 +16,8 @@ export class PageHeaderComponent implements OnInit, OnDestroy, AfterViewInit, Af
 
   isLoggedIn: boolean = false;
   private authListenerSubs: Subscription;
+
+  page = Page;
 
   constructor(private layoutsService: LayoutsService,
               private authService: AuthService,
