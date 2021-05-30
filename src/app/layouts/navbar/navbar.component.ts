@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 import { environment } from 'src/environments/environment';
+import { LayoutsService } from '../layouts.service';
+import { Page } from '../../constants/page.constants';
 
 @Component({
   selector: 'app-navbar',
@@ -14,8 +16,14 @@ import { environment } from 'src/environments/environment';
 export class NavbarComponent extends ApiService  implements OnInit, OnDestroy {
   
   private authListenerSubs: Subscription;
+
+  private activePageSubs: Subscription;
+  activePage;
+  page = Page;
+
   private userId: string;
   
+  ;
   userAuthenticated = false;
   userData: Object = {
     firstName : '',
@@ -23,7 +31,9 @@ export class NavbarComponent extends ApiService  implements OnInit, OnDestroy {
     email: ''
   };
 
-  constructor(private authService: AuthService, private errorHandlerService: ErrorHandlerService,
+  constructor(private authService: AuthService,
+            private errorHandlerService: ErrorHandlerService,
+            private layoutsService: LayoutsService,
           http: HttpClient) { 
     super(environment.SERVER_URL + 'user', http);
   }
@@ -37,10 +47,15 @@ export class NavbarComponent extends ApiService  implements OnInit, OnDestroy {
         this.userAuthenticated = res.isAuthenticated;
         this.getUser();
       });
+    this.activePageSubs = this.layoutsService.getActivePageListener()
+      .subscribe(page => {
+        this.activePage = page;
+      });
     this.getUser();
   }
 
   ngOnDestroy() {
+    this.activePageSubs.unsubscribe();
     this.authListenerSubs.unsubscribe();
   }
 

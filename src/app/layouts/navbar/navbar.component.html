@@ -6,10 +6,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
-            <li *ngIf="userAuthenticated" class="nav-item pl-4 pr-4" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <li *ngIf="userAuthenticated" class="nav-item pl-4 pr-4" 
+                [class.active]="activePage === page.PRODUCT">
+                <!-- routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" -->
                 <a class="nav-link" routerLink="/products">Products</a>
             </li>
-            <li *ngIf="userAuthenticated" class="nav-item pl-4 pr-4" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <li *ngIf="userAuthenticated" class="nav-item pl-4 pr-4"
+                [class.active]="activePage === page.CATEGORY">
+                <!-- routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" -->
                 <a class="nav-link" routerLink="/category">Category</a>
             </li>
         </ul>
