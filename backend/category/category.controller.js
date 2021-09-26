@@ -93,7 +93,6 @@ module.exports = {
             createdBy: req.tokenData.userId,
             dateUpdated: new Date()
         });
-        console.log(category)
         Category.updateOne({ _id: req.params.id, createdBy: req.tokenData.userId }, category)
             .then(() => {
                 res.status(200).json({ message: 'Category is updated' });
