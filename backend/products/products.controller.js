@@ -14,8 +14,17 @@ module.exports = {
   getAll : (req, res) => {
     const pageSize = +req.query.pageSize;
     const currentPage = +req.query.page;
-    const productQuery = Product.find();
+    let productQuery = Product.find();
     let fetchedResults;
+
+    if(req.query.categories) {
+      productQuery = Product.find({
+        'categories': {
+              $in: req.query.categories.split(',')
+            }
+        });
+    }
+
     if (pageSize && currentPage) {
       productQuery
         .skip(pageSize * (currentPage - 1))
@@ -24,8 +33,13 @@ module.exports = {
 
     productQuery.find()
       .then(result => {
+        // FOR PAGINATION
         fetchedResults = result;
-        return Product.countDocuments();
+        return req.query.categories ? Product.find({
+          'categories': {
+                $in: req.query.categories.split(',')
+              }
+          }).countDocuments() : Product.countDocuments();
       })
       .then(count => {
         res.status(200).json({
